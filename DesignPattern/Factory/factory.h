@@ -2,12 +2,6 @@
 
 using namespace std;
 
-enum PRODUCT_TYPE
-{
-    TYPE_A,
-    TYPE_B
-};
-
 class product
 {
 public:
@@ -17,37 +11,39 @@ public:
 class productA: public product
 {
 public:
-    void show(void)
-    {
-        cout<<"I'm product A!"<<endl;
-    }
+    void show(){cout<<"I'm Product A!"<<endl;}
 };
 
 class productB: public product
 {
 public:
-    void show(void)
-    {
-        cout<<"I'm product B!"<<endl;
-    }
+    void show(){cout<<"I'm Product B!"<<endl;}
 };
 
 class factory
 {
 public:
-    product *create_product(PRODUCT_TYPE type)
+    virtual product* createProduct() = 0;
+};
+
+class factoryA: public factory
+{
+public:
+    product* createProduct()
     {
-        switch (type)
-        {
-            case TYPE_A:
-                return new productA();
-
-            case TYPE_B:
-                return new productB();
-
-            default:
-                return NULL;
-        }
+        return new productA();
     }
 };
+
+class factoryB: public factory
+{
+public:
+    product* createProduct()
+    {
+        return new productB();
+    }
+};
+
+
+
 

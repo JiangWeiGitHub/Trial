@@ -2,24 +2,37 @@
 
 int main(void)
 {
-    factory *ProductFactory = new factory();
+    factory *facA = new factoryA();
+    product *proA = facA->createProduct();
+    proA->show();
 
-    product *productA = ProductFactory->create_product(TYPE_A);
-    if(productA != NULL)
-        productA->show();
+    factory *facB = new factoryB();
+    product *proB = facB->createProduct();
+    proB->show();
 
-    product *productB = ProductFactory->create_product(TYPE_B);
-    if(productB != NULL)
-        productB->show();
+    if(facA != NULL)
+    {
+        delete facA;
+        facA = NULL;
+    }
 
-    delete ProductFactory;
-    ProductFactory = NULL;
+    if(facB != NULL)
+    {
+        delete facB;
+        facB = NULL;
+    }
 
-    delete productA;
-    productA = NULL;
+    if(proA != NULL)
+    {
+        delete proA;
+        proA = NULL;
+    }
 
-    delete productB;
-    productB = NULL;        
+    if(proA != NULL)
+    {
+        delete proA;
+        proA = NULL;
+    }
 
     return 0;
 }
