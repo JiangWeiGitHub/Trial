@@ -9,7 +9,13 @@ public:
     {
         if (m_Instance == NULL )
         {
-            m_Instance = new Singleton ();
+            //Lock(); // C++ has no lock lib
+            if (m_Instance == NULL )
+            {
+                m_Instance = new Singleton ();
+            }
+
+            //UnLock();
         }
         return m_Instance;
     }
@@ -23,14 +29,13 @@ public:
         }
     }
 
-    // This is just a operation example
     int GetTest()
     {
         return m_Test;
     }
 
 private:
-    Singleton(){ m_Test = 11; }
+    Singleton(){ m_Test = 22; }
     static Singleton *m_Instance;
     int m_Test;
 };
@@ -41,7 +46,6 @@ int main(void)
 {
     Singleton *singletonObj = Singleton ::GetInstance();
     cout<<singletonObj->GetTest()<<endl;
-
     Singleton ::DestoryInstance();
 
     return 0;
