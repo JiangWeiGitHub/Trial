@@ -109,6 +109,8 @@ int main(void)
     delete pObserver;
     delete pObserver2;
     delete pSubject;
+
+    return 0;
 }
 
 
