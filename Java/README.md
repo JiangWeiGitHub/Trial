@@ -10,5 +10,6 @@
 ```
 
 ### How to run
-  + javac ???.java
-  + java ???
+  1. javac main.java
+    ps: main.java means it includes `public static void main(String[] args)`
+  2. java main
