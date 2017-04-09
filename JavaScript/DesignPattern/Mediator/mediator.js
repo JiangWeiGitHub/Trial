@@ -1,7 +1,6 @@
 class Mom {
   constructor() {
     this.mood = 'normal'
-    // this.mediator = mediator
   }
 
   cook() {
@@ -18,15 +17,20 @@ class Mom {
     mediator.calling('cleanUpGarbage')
     console.log('Done!')
   }
+
+  happy() {
+    this.mood = 'happy'
+  }
+
+  normal() {
+    this.mood = 'normal'
+  }
 }
 
 class Dad {
-  constructor() {
-    // this.mediator = mediator
-  }
 
   payBill(number) {
-    console.log('Spent ' + number + ' Yuan!')
+    console.log('Dad spent ' + number + ' Yuan!')
   }
 
   cleanUpGarbage() {
@@ -37,6 +41,11 @@ class Dad {
   wantSomething(mediator) {
     console.log('Dad wants a T-shirt!')
     mediator.calling('buy', 'T-shirt')
+  }
+
+  beg(mediator) {
+    console.log('Smile please!')
+    mediator.calling('momMood', 'happy')
   }
 }
 
@@ -56,11 +65,19 @@ class Mediator extends MediatorSkeleton {
 
   calling(type, contents) {
     switch(type) {
+      case 'momMood':
+        this.mom.happy()
+        break
       case 'cleanUpGarbage':
         this.dad.cleanUpGarbage()
         break
       case 'buy':
-        this.mom.buy(contents)
+        if(this.mom.mood === 'happy') {
+          this.mom.buy(contents)
+        }
+        else {
+          console.log('No way!')
+        }      
         break
       default:
         console.log('Nothing happens!')
@@ -77,4 +94,6 @@ mom.buy('Book')
 mom.clean(mediator)
 
 dad.payBill(100)
+dad.wantSomething(mediator)
+dad.beg(mediator)
 dad.wantSomething(mediator)
