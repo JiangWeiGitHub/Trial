@@ -1,3 +1,5 @@
 *.o
 
 *.class
+
+a.out
