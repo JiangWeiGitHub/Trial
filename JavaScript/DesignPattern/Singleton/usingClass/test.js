@@ -1,0 +1,10 @@
+let {testAAA, testBBB} = require('./singleton')
+
+testAAA()
+testBBB()
+testAAA()
+testBBB()
+testAAA()
+testBBB()
+testAAA()
+testBBB()
