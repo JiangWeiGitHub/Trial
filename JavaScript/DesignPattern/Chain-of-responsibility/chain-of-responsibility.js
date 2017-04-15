@@ -33,23 +33,14 @@ class People {
 }
 
 class Kid extends People {
-  constructor() {
-    super()
-    this.queue = null
-  }
 
   sendQuery(entity) {
-    console.log('Kid said: ' + entity.getContents() )
-    console.log('Level: ' + entity.getLevel())
+    console.log('Kid said: ' + entity.getContents() + ' < Level: ' + entity.getLevel() + ' >')
     this.queue.checkQuery(entity)
   }
 }
 
 class Dad extends People {
-  constructor() {
-    super()
-    this.queue = null
-  }
   
   checkQuery(entity) {
     let level = entity.getLevel()
@@ -57,9 +48,44 @@ class Dad extends People {
       case 'low':
         console.log('Dad said: OK!')
         break
-      case 'high':
-        console.log('Dad said: I can not decide by myself.')
+      default:
+        console.log('Dad said: I can\'t decide by myself...')
         this.queue.checkQuery(entity)
+    }
+  }
+}
+
+class Grandpa extends People {
+ 
+  checkQuery(entity) {
+    let level = entity.getLevel()
+    switch (level) {
+      case 'low':
+        console.log('Grandpa said: OK!')
+        break
+      case 'middle':
+        console.log('Grandpa said: OK!')
+        break
+      default:
+        console.log('Grandpa said: I can\'t decide by myself...')
+        this.queue.checkQuery(entity)
+    }
+  }
+}
+
+class Grandma extends People {
+ 
+  checkQuery(entity) {
+    let level = entity.getLevel()
+    switch (level) {
+      case 'low':
+        console.log('Grandma said: OK!')
+        break
+      case 'middle':
+        console.log('Grandma said: OK!')
+        break
+      case 'high':
+        console.log('Grandma said: OK!')
         break
       default:
         console.log('Oops!')
@@ -67,32 +93,16 @@ class Dad extends People {
   }
 }
 
-class Grandpa extends People {
-  constructor() {
-    super()
-    this.queue = null
-  }
-  
-  checkQuery(entity) {
-    let level = entity.getLevel()
-    switch (level) {
-      case 'low':
-        console.log('Grandpa said: OK!')
-        break
-      case 'high':
-        console.log('Grandpa said: OK!')
-    }
-  }
-}
-
 let kid = new Kid()
 let dad = new Dad()
 let grandpa = new Grandpa()
+let grandma = new Grandma()
 
 let query = new Query()
 
 kid.setNext(dad)
 dad.setNext(grandpa)
+grandpa.setNext(grandma)
 
 query.setContents('Can I play PS4?')
 query.setLevel('high')
@@ -102,4 +112,10 @@ console.log('########################################')
 
 query.setContents('Can I go out?')
 query.setLevel('low')
+kid.sendQuery(query)
+
+console.log('########################################')
+
+query.setContents('Can I have an ice cream?')
+query.setLevel('middle')
 kid.sendQuery(query)
