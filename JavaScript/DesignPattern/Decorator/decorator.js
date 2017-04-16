@@ -30,8 +30,10 @@ class Nickname extends People {
 }
 
 let star = new Star('Tommy')
+star.echo()
+
+console.log('#############################################')
 
 star = new Nickname(star)
 star.addNickname('Tom')
-
 star.echo()
