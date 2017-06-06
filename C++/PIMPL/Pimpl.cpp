@@ -13,11 +13,14 @@ Pimpl::~Pimpl()
 }
 
 // template <typename _DATA_TYPE_>
+// void Pimpl::echoNumber(_DATA_TYPE_ number)
+// {
+//   std::cout << number << std::endl;
+// }
+
 int Pimpl::addWithPrivateNumber(int number)
 {
   int tmp = this->_privateClass->get() + number;
-
-  std::cout << tmp << std::endl;
 
   return tmp;
 }

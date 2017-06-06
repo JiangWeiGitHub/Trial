@@ -1,6 +1,6 @@
 #include <iostream>
 
-// template <typename _DATA_TYPE_>
+class PrivateClass;
 
 class Pimpl
 {
@@ -8,10 +8,11 @@ class Pimpl
     Pimpl();
     ~Pimpl();
 
-    // template <typename _DATA_TYPE_>
+    template <typename _DATA_TYPE_>
+    void echoNumber(_DATA_TYPE_ number){std::cout << number << std::endl;};
+
     int addWithPrivateNumber(int number);
 
   private:
-    class PrivateClass;
     PrivateClass* _privateClass;
 };

@@ -1,10 +1,10 @@
 class PrivateClass
 {
   public:
-    PrivateClass(int number):_number(number){this->_number = 1000;};
-    ~PrivateClass(){this->_number = 0;};
+    PrivateClass(int number);
+    ~PrivateClass();
 
-    int get(void){return this->_number;};
+    int get(void);
 
   private:
     int _number;
