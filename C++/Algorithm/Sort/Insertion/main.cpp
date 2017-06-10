@@ -7,7 +7,7 @@ int main(void)
   Insertion tmp;
   tmp.sort(test, 11);
 
-  for(int i = 0; i < sizeof(test) / sizeof(int); i ++)
+  for(int i = sizeof(test) / sizeof(int) - 1; i >= 0 ; i --)
   {    
     std::cout<<test[i]<<std::endl;
   }
