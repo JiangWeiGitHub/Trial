@@ -17,12 +17,12 @@ bool Shell::sort(int* number, int length)
     {
       for (j = i + gap; j < length; j += gap)
       {
-        if (number[j] < number[j - gap])
+        if (number[j] > number[j - gap])
         {  
           int temp = number[j];
           int k = j - gap;
 
-          while (k >= 0 && number[k] > temp)  
+          while (k >= 0 && number[k] < temp)  
           {
             number[k + gap] = number[k];  
             k -= gap;
