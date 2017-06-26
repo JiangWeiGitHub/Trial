@@ -13,3 +13,7 @@ Learning some programming languages.
 [Half-Sync/Half-Async](http://blog.csdn.net/cjfeii/article/details/17267487)
 
 [Async/Sync/Block/NonBlock](https://read01.com/7BGDd.html)
+
+[LLVM](http://www.aosabook.org/en/llvm.html)
+
+[LLVM](http://www.cs.cornell.edu/~asampson/blog/llvm.html)
