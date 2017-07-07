@@ -34,35 +34,35 @@ bool Shell::sort(int* number, int length)
 {
   for(int i = length / 2; i >= 1; i = i / 2)
   {
-    std::cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<std::endl;
-    std::cout<<"i: "<<i<<std::endl;
+    // std::cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<std::endl;
+    // std::cout<<"i: "<<i<<std::endl;
     for(int j = 0; j < length / i; j++)
     {
-      std::cout<<"j: "<<j<<std::endl;
+      // std::cout<<"j: "<<j<<std::endl;
       for(int k = j; k < j + i; k++)
       {
-        std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"<<std::endl;
-        std::cout<<"k: "<<k<<std::endl;
+        // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"<<std::endl;
+        // std::cout<<"k: "<<k<<std::endl;
         if(number[k] > number[k + i])
         {
-          std::cout<<"number[k]: "<<number[k]<<std::endl;
-          std::cout<<"number[k + i]: "<<number[k + i]<<std::endl;
-          std::cout<<"k: "<<k<<std::endl;
-          std::cout<<"k + i: "<<k + i<<std::endl;
+          // std::cout<<"number[k]: "<<number[k]<<std::endl;
+          // std::cout<<"number[k + i]: "<<number[k + i]<<std::endl;
+          // std::cout<<"k: "<<k<<std::endl;
+          // std::cout<<"k + i: "<<k + i<<std::endl;
 
-std::cout<<"--------------------------------------------------"<<std::endl;
+// std::cout<<"--------------------------------------------------"<<std::endl;
 
           int tmp = number[k];
           number[k] = number[k + i];
           number[k + i] = tmp;
-          std::cout<<"k: "<<k<<std::endl;
-          std::cout<<"k + i: "<<k + i<<std::endl;
-          std::cout<<"number[k]: "<<number[k]<<std::endl;
-          std::cout<<"number[k + i]: "<<number[k + i]<<std::endl;
+          // std::cout<<"k: "<<k<<std::endl;
+          // std::cout<<"k + i: "<<k + i<<std::endl;
+          // std::cout<<"number[k]: "<<number[k]<<std::endl;
+          // std::cout<<"number[k + i]: "<<number[k + i]<<std::endl;
         }
       }
     }
 
-    std::cout<<"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"<<std::endl;
+    // std::cout<<"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"<<std::endl;
   } 
 }
