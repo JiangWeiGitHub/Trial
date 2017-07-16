@@ -60,41 +60,58 @@ void calcCharCount(char *s)
     }
   }
 
-  for(tmp = 0; tmp < 25; tmp++)
-  {
-    printf("list[%d].name: %c\n", tmp, list[tmp].name);
-    printf("list[%d].counter: %d\n", tmp, list[tmp].counter);
-  }
+  // for(tmp = 0; tmp < 26; tmp++)
+  // {
+  //   printf("list[%d].name: %c\n", tmp, list[tmp].name);
+  //   printf("list[%d].counter: %d\n", tmp, list[tmp].counter);
+  // }
 
 
-  for(tmp = 0; tmp < 25; tmp++)
+  for(tmp = 0; tmp < 26; tmp++)
   {
     if(list[tmp].counter > 0)
     {
-      if(list[tmp].counter == list[tmp-1].counter)
+      if(tmp > 0)
       {
-        final[counterLabel].nameList[nameListCounter++] = list[tmp].name;
-      }
-      else
-      {
-        counterLabel += 1;
-        final[counterLabel].nameList[nameListCounter++] = list[tmp].name;
-      }      
+        if(list[tmp].counter == list[tmp-1].counter)
+        {
+          final[counterLabel].nameList[nameListCounter++] = list[tmp].name;
+        }
+        else
+        {
+          counterLabel += 1;
+          final[counterLabel].nameList[nameListCounter++] = list[tmp].name;
+        }
+
+        final[counterLabel].counter = list[tmp].counter;
+      } 
     }
   }
 }
 
 void main(void)
 {
-  calcCharCount("abc");
+  calcCharCount("She could see the open door of a departmental office. 'Hello! Excuse me. This is the department of French, isn't it?'");
 
   int tmp;
   for(tmp = 0; tmp < 26; tmp++)
   {
+    if(final[tmp].counter <= 0)
+    {
+      continue;
+    }
+
     int i;
     for(i = 0; i < 26; i++)
     {
-      printf("%c, ", final[tmp].nameList[i]);
+      if(final[tmp].nameList[i] >= 'a' && final[tmp].nameList[i] <= 'z' && final[tmp].nameList[i+1] >= 'a' && final[tmp].nameList[i+1] <= 'z')
+      {
+        printf("%c, ", final[tmp].nameList[i]);
+      }
+      else if(final[tmp].nameList[i] >= 'a' && final[tmp].nameList[i] <= 'z' && final[tmp].nameList[i+1] < 'a' || final[tmp].nameList[i+1] > 'z')
+      {
+        printf("%c ", final[tmp].nameList[i]);
+      }
     }
 
     printf(": %d\n", final[tmp].counter);    
