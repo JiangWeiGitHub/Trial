@@ -31,11 +31,9 @@ void calcCharCount(char *s)
   {
     if(*s <= 'z' && *s >= 'a')
     {
-      // printf("s: %c\n", *s);
       int number = *s - 'a';
       list[number].name = *s;
       list[number].counter += 1;
-      // printf("list[%d].counter: %d\n", number, list[number].counter);
     }
 
     s++;
@@ -59,13 +57,6 @@ void calcCharCount(char *s)
       }
     }
   }
-
-  // for(tmp = 0; tmp < 26; tmp++)
-  // {
-  //   printf("list[%d].name: %c\n", tmp, list[tmp].name);
-  //   printf("list[%d].counter: %d\n", tmp, list[tmp].counter);
-  // }
-
 
   for(tmp = 0; tmp < 26; tmp++)
   {
