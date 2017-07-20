@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #define MAXLEN 50
-
 int data[MAXLEN];
 
 int *calcFact(int n)
@@ -47,19 +46,17 @@ int *calcFact(int n)
     }
 
     printf("\n");
-
   }
 
   return data;
-
 }
 
-
-int main()
+int main(void)
 {
   int n;
   printf("Enter a number: ");
   scanf("%d", &n);
+
   calcFact(n);
 
   return 0;
