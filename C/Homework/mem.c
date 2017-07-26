@@ -7,8 +7,7 @@ int main(void)
 {
   int fd;
   char rdbuf[10] = {0};
-  char *pointer = rdbuf;
-  char wrbuf[10] = "1234567890";
+  char wrbuf[10] = "helloworld";
   int i;
   fd = open("/dev/mem",O_RDWR);
   if(fd < 0)
@@ -24,7 +23,7 @@ int main(void)
 
   for(i = 0;i < 10;i++)
   {
-    printf("old mem[%d]:%c\n",i,*(pointer + i));
+    printf("old mem[%d]:%c\n",i,*(rdbuf + i));
   }
 
   lseek(fd,0,0);
@@ -34,7 +33,7 @@ int main(void)
 
   for(i = 0;i < 10;i++)
   {
-    printf("new mem[%d]:%c\n",i,*(pointer + i));
+    printf("new mem[%d]:%c\n",i,*(rdbuf + i));
   }
 
   return 0;
