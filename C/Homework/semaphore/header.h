@@ -17,11 +17,10 @@ union semun
   unsigned short *arry;
 };
 
-static int sem_id = 0;
-
-int set_semvalue();
-void del_semvalue();
-int semaphore_p();
-int semaphore_v();
+int get_sem_id();
+int set_semvalue(int sem_id);
+void del_semvalue(int sem_id);
+int semaphore_p(int sem_id);
+int semaphore_v(int sem_id);
 
 #endif
