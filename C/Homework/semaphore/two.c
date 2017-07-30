@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
 
   int sem_id = get_sem_id();
 
+  strcat(message, string);
+
   for(i = 0; i < 10; ++i)
   {
     // Enter Critical Region
@@ -16,7 +18,7 @@ int main(int argc, char *argv[])
       perror("semaphore_p: ");
       exit(EXIT_FAILURE);
     }
-
+    
     printf("%s\n", message);
 
     fflush(stdout);

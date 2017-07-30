@@ -1,5 +1,7 @@
 #include "./header.h"
 
+char string[50] = "Testing extern string!";
+
 static int sem_id = 0;
 
 int get_sem_id()

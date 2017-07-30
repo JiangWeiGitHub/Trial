@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
 
-    printf("%s\n", message);
+    printf("%s\n", string);
 
     fflush(stdout);
 

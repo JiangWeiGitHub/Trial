@@ -17,6 +17,8 @@ union semun
   unsigned short *arry;
 };
 
+extern char string[];
+
 int get_sem_id();
 int set_semvalue(int sem_id);
 void del_semvalue(int sem_id);
