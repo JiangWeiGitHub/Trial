@@ -1,3 +1,3 @@
-#include <stdio.h>
+#include "./stack.h"
 
-int calculator(char *string);
+void calculator(char *string);
