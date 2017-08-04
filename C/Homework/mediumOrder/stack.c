@@ -20,8 +20,10 @@ struct stringStack *intiStringStack()
 
 void pushString(struct stringStack *stack, char *string)
 {
+  printf("string: %s\n", string);
   strcpy((stack->string)[(stack->top)++], string);
   printf("top: %d\n", stack->top);
+  printf("(stack->string)[stack->top-1]: %s\n", (stack->string)[stack->top-1]);
 }
 
 char *popString(struct stringStack *stack)
