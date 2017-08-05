@@ -10,6 +10,6 @@
 
 void main(void)
 {
-  // calculator("11 * 8 - (10 / 2) + 7");
-  calculator("*");
+  calculator("11 * 8 - (10 / 2) + 7");
+  // calculator("11*8");
 }
