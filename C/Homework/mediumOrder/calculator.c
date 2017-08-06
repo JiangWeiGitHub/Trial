@@ -7,7 +7,7 @@ void calculator(char *string)
   char number[32];
   int counter = 0;
 
-  int leftFlag = 0;
+  int flagBracket = 0;
 
   struct stringStack *stackLabel = intiStringStack();
   struct stringStack *stackNumber = intiStringStack();
@@ -33,82 +33,115 @@ void calculator(char *string)
 
       if(*p == '(')
       {
-        leftFlag = 1;
-
+        flagBracket = 1;
         pushString(stackLabel, "(");
       }
 
       if(*p == ')')
       {
-        leftFlag = 0;
-
         while(getTopString(stackLabel)[0] != '(')
         {
-          // printf("111getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
+          // // printf("111getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
+          // if(getTopString(stackLabel)[0] == '+' || getTopString(stackLabel)[0] == '-')
+          // {
+
+          // }
+          // pushString(stackNumber, popString(stackLabel));
+          // // printf("222getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
           pushString(stackNumber, popString(stackLabel));
-          // printf("222getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
         }
 
         popString(stackLabel);
+
+        flagBracket = 0;
       }
 
       if(*p == '*')
       {
+        // pushString(stackLabel, "*");
+        if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
+        {
+          if(flagBracket == 1)
+          {
+            while(getTopString(stackLabel)[0] != '(')
+            {
+              pushString(stackNumber, popString(stackLabel));
+            }
+          }
+          else
+          {
+            while((stackLabel->top) > 0)
+            {
+              pushString(stackNumber, popString(stackLabel));
+            }
+          }
+        }
+
         pushString(stackLabel, "*");
       }
 
       if(*p == '/')
       {
+        // pushString(stackLabel, "*");
+        if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
+        {
+          if(flagBracket == 1)
+          {
+            while(getTopString(stackLabel)[0] != '(')
+            {
+              pushString(stackNumber, popString(stackLabel));
+            }
+          }
+          else
+          {
+            while((stackLabel->top) > 0)
+            {
+              pushString(stackNumber, popString(stackLabel));
+            }
+          }
+        }
+
         pushString(stackLabel, "/");
       }
 
       if(*p == '+')
       {
-        if(leftFlag == 0)
+        if(flagBracket == 1)
         {
-          if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
+          while(getTopString(stackLabel)[0] != '(')
           {
-            while(stackLabel->top > 0)
-            {
-              pushString(stackNumber, popString(stackLabel));
-            }
-
-            pushString(stackLabel, "+");
-          }
-          else
-          {
-            pushString(stackLabel, "+");
+            pushString(stackNumber, popString(stackLabel));
           }
         }
         else
         {
-          pushString(stackLabel, "+");
-        }     
+          while((stackLabel->top) > 0)
+          {
+            pushString(stackNumber, popString(stackLabel));
+          }
+        }
+
+        pushString(stackLabel, "+");
       }
 
       if(*p == '-')
       {
-        if(leftFlag == 0)
+        if(flagBracket == 1)
         {
-          // printf("getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
-          if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
+          while(getTopString(stackLabel)[0] != '(')
           {
-            while(stackLabel->top > 0)
-            {
-              pushString(stackNumber, popString(stackLabel));
-            }
-
-            pushString(stackLabel, "-");
+            pushString(stackNumber, popString(stackLabel));
           }
-          else
-          {
-            pushString(stackLabel, "-");
-          } 
         }
         else
         {
-          pushString(stackLabel, "-");
-        }  
+          while((stackLabel->top) > 0)
+          {
+            pushString(stackNumber, popString(stackLabel));
+          }
+        }
+
+        pushString(stackLabel, "-");
       }
     }
 
