@@ -20,22 +20,22 @@ struct stringStack *intiStringStack()
 
 void pushString(struct stringStack *stack, char *string)
 {
-  printf("string: %s\n", string);
+  // printf("string: %s\n", string);
   (stack->top)++;
   memset((stack->string)[stack->top], 0, strlen((stack->string)[stack->top]));
   strcpy((stack->string)[stack->top], string);
-  printf("top: %d\n", stack->top);
-  printf("(stack->string)[stack->top]: %s\n", (stack->string)[stack->top]);
+  // printf("top: %d\n", stack->top);
+  // printf("(stack->string)[stack->top]: %s\n", (stack->string)[stack->top]);
 }
 
 char *popString(struct stringStack *stack)
 {
-  printf("top before: %d\n", stack->top);
+  // printf("top before: %d\n", stack->top);
   // memset((stack->string)[stack->top], 0, strlen((stack->string)[stack->top]));
   (stack->top)--;
-  printf("top after: %d\n", stack->top);
+  // printf("top after: %d\n", stack->top);
 
-  printf("(stack->string)[stack->top + 1]: %s\n", (stack->string)[stack->top + 1]);
+  // printf("(stack->string)[stack->top + 1]: %s\n", (stack->string)[stack->top + 1]);
 
   return (stack->string)[stack->top + 1];
 }
