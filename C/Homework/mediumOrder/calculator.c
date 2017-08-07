@@ -41,13 +41,6 @@ void calculator(char *string)
       {
         while(getTopString(stackLabel)[0] != '(')
         {
-          // // printf("111getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
-          // if(getTopString(stackLabel)[0] == '+' || getTopString(stackLabel)[0] == '-')
-          // {
-
-          // }
-          // pushString(stackNumber, popString(stackLabel));
-          // // printf("222getTopString(stackLabel)[0]: %c\n",getTopString(stackLabel)[0]);
           pushString(stackNumber, popString(stackLabel));
         }
 
@@ -56,9 +49,8 @@ void calculator(char *string)
         flagBracket = 0;
       }
 
-      if(*p == '*')
+      if(*p == '*' || *p == '/')
       {
-        // pushString(stackLabel, "*");
         if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
         {
           if(flagBracket == 1)
@@ -77,34 +69,17 @@ void calculator(char *string)
           }
         }
 
-        pushString(stackLabel, "*");
-      }
-
-      if(*p == '/')
-      {
-        // pushString(stackLabel, "*");
-        if(getTopString(stackLabel)[0] == '*' || getTopString(stackLabel)[0] == '/')
+        if(*p == '*')
         {
-          if(flagBracket == 1)
-          {
-            while(getTopString(stackLabel)[0] != '(')
-            {
-              pushString(stackNumber, popString(stackLabel));
-            }
-          }
-          else
-          {
-            while((stackLabel->top) > 0)
-            {
-              pushString(stackNumber, popString(stackLabel));
-            }
-          }
+          pushString(stackLabel, "*");
         }
-
-        pushString(stackLabel, "/");
+        else
+        {
+          pushString(stackLabel, "/");
+        }
       }
 
-      if(*p == '+')
+      if(*p == '+' || *p == '-')
       {
         if(flagBracket == 1)
         {
@@ -121,27 +96,14 @@ void calculator(char *string)
           }
         }
 
-        pushString(stackLabel, "+");
-      }
-
-      if(*p == '-')
-      {
-        if(flagBracket == 1)
+        if(*p == '+')
         {
-          while(getTopString(stackLabel)[0] != '(')
-          {
-            pushString(stackNumber, popString(stackLabel));
-          }
+          pushString(stackLabel, "+");
         }
         else
         {
-          while((stackLabel->top) > 0)
-          {
-            pushString(stackNumber, popString(stackLabel));
-          }
+          pushString(stackLabel, "-");
         }
-
-        pushString(stackLabel, "-");
       }
     }
 
@@ -232,5 +194,5 @@ void calculator(char *string)
     (stackOpera->top)--;
   }
 
-  printf("Result: %s\n", getTopString(stackResult));
+  printf("\nResult: %s\n", getTopString(stackResult));
 }
