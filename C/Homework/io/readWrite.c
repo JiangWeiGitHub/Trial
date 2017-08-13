@@ -1,8 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <unistd.h>
 
 void main(void)
@@ -15,7 +15,7 @@ void main(void)
   }
 
   ssize_t counter = 0;
-  char buf[1024] = "Only for test!\n"; 
+  char buf[1024] = "Only for test, hello world!"; 
   counter = write(fd, buf, 1024);
   if(counter <= 0)
   {
@@ -29,7 +29,7 @@ void main(void)
     perror("Close file: ");
   }
 
-  fd = open("./test.txt", O_CREAT | O_TRUNC | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO);
+  fd = open("./test.txt", O_RDONLY);
   if(fd == -1)
   {
     perror("Open file: ");
@@ -41,6 +41,7 @@ void main(void)
   if(counter <= 0)
   {
     perror("Read file: ");
+    exit(-1);
   }
 
   printf("Read file: %s\n", read_buf);
