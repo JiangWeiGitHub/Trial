@@ -45,4 +45,10 @@ void main(void)
   }
 
   printf("Read file: %s\n", read_buf);
+
+  result = close(fd);
+  if(result == -1)
+  {
+    perror("Close file: ");
+  }
 }
