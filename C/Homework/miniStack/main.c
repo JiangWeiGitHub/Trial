@@ -5,23 +5,52 @@ struct stack
 {
   int number[1024];
   int top;
+  struct stack *miniStack;
 };
 
-void init(struct stack *name)
+struct stack *init(void)
 {
-  name->top = 0;
+  struct stack *one = (struct stack *)malloc(sizeof(struct stack));
+  struct stack *two = (struct stack *)malloc(sizeof(struct stack));
+  
+  one->top = 0;
+  one->miniStack = two;
+
+  two->top = 0;
+  two->miniStack = NULL;
+  
+  return one;
+}
+
+int getMini(struct stack *name)
+{
+  if(name->miniStack->top > 0)
+  {
+    return (name->miniStack->number)[name->miniStack->top];
+  }
+  else
+  {
+    return 65535;
+  }
 }
 
 int pop(struct stack *name)
 {
-  if(name->top > 1)
+  if(name->top > 0)
   {
     name->top -= 1;
+
+    if((name->number)[name->top + 1] == getMini(name))
+    {
+      name->miniStack->top -= 1;
+      (name->miniStack->number)[name->miniStack->top + 1] = 0;
+    }
+
     return (name->number)[name->top + 1];
   }
   else
   {
-    return -1;
+    return -65535;
   }
 }
 
@@ -31,6 +60,13 @@ void push(struct stack *name, int number)
   {
     name->top += 1;
     (name->number)[name->top] = number;
+
+    if(number < getMini(name))
+    {
+      name->miniStack->top += 1;
+      (name->miniStack->number)[name->miniStack->top] = number;
+    }
+
   }
   else
   {
@@ -38,90 +74,55 @@ void push(struct stack *name, int number)
   }
 }
 
-int getMini(struct stack *name)
-{
-  if(name->top > 0)
-  {
-    return (name->number)[name->top];
-  }
-  else
-  {
-    return 65535;
-  }
-}
-
-struct stack *one;
-struct stack *two;
-
 int main(void)
 {
-  one = (struct stack *)malloc(sizeof(struct stack));
-  two = (struct stack *)malloc(sizeof(struct stack));
-  init(one);
-  init(two);
+  struct stack *test = init();
 
-  int tmp[] = {5,4,3,6,8,9,2,14};
-  int i;
+  int tmp[] = {13,455,56,64854,42,5458,21,8,54,4,44,8};
+  int i, j;
   for(i = 0; i < (sizeof(tmp) / sizeof(tmp[0])); i ++)
   {
-    push(one, tmp[i]);
-    if(tmp[i] < getMini(two))
+    push(test, tmp[i]);
+  }
+
+  printf("\ntest: ");
+  for(i = 0; i <= test->top; i ++)
+  {
+    printf("%d ", (test->number)[i]);
+  }
+  printf("\n");
+
+  printf("miniStack: ");
+  for(i = 0; i <= test->miniStack->top; i ++)
+  {
+    printf("%d ", (test->miniStack->number)[i] );
+  }
+
+  printf("\n\n");
+
+  printf("******************************************");
+
+  printf("\n");
+
+  for(i = 0; i < (sizeof(tmp) / sizeof(tmp[0])); i ++)
+  {
+    printf("\nPop: %d\n", pop(test));
+
+    printf("test: ");
+    for(j = 0; j <= test->top; j ++)
     {
-      push(two, tmp[i]);
+      printf("%d ", (test->number)[j]);
     }
-  }
+    printf("\n");
 
-  printf("one: ");
-  for(i = 0; i <= one->top; i ++)
-  {
-    printf("%d ", (one->number)[i]);
-  }
-  printf("\n");
+    printf("miniStack: ");
+    for(j = 0; j <= test->miniStack->top; j ++)
+    {
+      printf("%d ", (test->miniStack->number)[j] );
+    }
 
-  printf("two: ");
-  for(i = 0; i <= two->top; i ++)
-  {
-    printf("%d ", (two->number)[i] );
+    printf("\n");
   }
-
-  printf("\n");
-
-  printf("******************************************\n");
-  
-  if( getMini(two) == (one->number)[one->top] )
-  {
-    pop(one);
-    pop(two);
-  }
-  else
-  {
-    pop(one);
-  }
-
-  if( getMini(two) == (one->number)[one->top] )
-  {
-    pop(one);
-    pop(two);
-  }
-  else
-  {
-    pop(one);
-  }
-
-  printf("one: ");
-  for(i = 0; i <= one->top; i ++)
-  {
-    printf("%d ", (one->number)[i]);
-  }
-  printf("\n");
-
-  printf("two: ");
-  for(i = 0; i <= two->top; i ++)
-  {
-    printf("%d ", (two->number)[i] );
-  }
-
-  printf("\n");
 
   return 0;
 }
