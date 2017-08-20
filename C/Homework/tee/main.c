@@ -76,6 +76,7 @@ int main(){
   pipe(pipefd2);
   pipe(pipefd3);
 
+  // at least one of fd_in and fd_out must be a pipe
   splice(fd1, NULL, pipefd2[1], NULL, 10086, SPLICE_F_MORE);
 
   tee(pipefd2[0], pipefd3[1], 10086, SPLICE_F_NONBLOCK);
@@ -87,6 +88,7 @@ int main(){
   close(fd1);
   close(fd2);
   close(fd3);
+
   close(pipefd2[0]);
   close(pipefd2[1]);
   close(pipefd3[0]);
