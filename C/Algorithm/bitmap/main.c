@@ -49,16 +49,16 @@ void printName(int id)
 void main(void)
 {
   char nameList[8] = {0};
-  // int testData[10][2] = {{0,1},{2,3},{4,5},{6,7},{2,4},{3,5},{4,6},{5,7},{2,5},{3,4}};
+  int testData[8][2] = {{0,1},{2,3},{4,5},{6,7},{7,6},{5,4},{3,2},{1,0}};
   // int testData[8][2] = {{0,1},{1,2},{2,3},{3,4},{3,5},{3,2},{3,1},{3,0}};
-  int testData[10][2] = {{TOM,JERRY},{MARK,AVIL},{BILL,CATE},{DAVID,EVAN},{MARK,BILL},{AVIL,CATE},{BILL,DAVID},{CATE,EVAN},{MARK,CATE},{AVIL,BILL}};
+  // int testData[10][2] = {{TOM,JERRY},{MARK,AVIL},{BILL,CATE},{DAVID,EVAN},{MARK,BILL},{AVIL,CATE},{BILL,DAVID},{CATE,EVAN},{MARK,CATE},{AVIL,BILL}};
   // int testData[2][2] = {{TOM,JERRY},{TOM,AVIL}};
   int i, j;
 
-  // for(i = 0; i < 8; i++)
-  // {
-  //   nameList[i] = 1 << i;
-  // }
+  for(i = 0; i < 8; i++)
+  {
+    nameList[i] = 1 << i;
+  }
 
   for(i = 0; i < 8; i++)
   {
