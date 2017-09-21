@@ -1,3 +1,5 @@
+/*man pthread_create*/
+
 #include <pthread.h>
 #include <string.h>
 #include <stdio.h>
