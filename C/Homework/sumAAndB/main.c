@@ -14,10 +14,20 @@ void main(void)
   int testData[MAX] = {1,2,3,4,5,6,7,0,8,9,10,11,13,12,14,15};
 
   int i;
+  int key = 10;
   for(i = 0; i < MAX; i++)
   {
     data[testData[i] / 8] |= 1 << ( testData[i] % 8);
 
-    printf("data: %x\n", data[testData[i] / 8]);
+    // printf("data: %x\n", data[testData[i] / 8]);
+  }
+
+  for(i = 0; i < MAX - key; i++)
+  {
+    if( ((data[i / 8] & 1 << i) == 1 << i) && ((data[(i + key) / 8] & 1 << (i + key) ) == 1 << (i + key) ) )
+    {
+      printf("counter: %d\n", i);
+      printf("data: %x, %x\n", data[i / 8], data[(i + key) / 8]);
+    }
   }
 }
