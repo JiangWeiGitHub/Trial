@@ -11,15 +11,25 @@ void main(void)
   // 326,36,36,226,62,85,48,457,54,454,54,54,878,54,54,54,5,54,54,54,};
   // int testData[MAX] = {1,2,5,7,6,5,3,5};
   // int testData[MAX] = {1,2,3,4,5,6,7,0};
-  int testData[MAX] = {1,2,3,4,5,6,7,0,8,9,10,11,13,12,14,15};
+  // int testData[MAX] = {1,2,3,4,5,6,7,0,8,9,10,11,13,12,14,15};
+  int testData[MAX] = {0};
 
   int i;
-  int key = 10;
+  int key = 10; // the result of a + b
+
+  // create random numbers
+  for(i = 0; i < MAX; i++)
+  {
+    testData[i] = rand() % MAX;
+
+    printf("testData[i]: %d\n", testData[i]);
+  }
+
   for(i = 0; i < MAX; i++)
   {
     data[testData[i] / 8] |= 1 << ( testData[i] % 8);
 
-    // printf("data: %x\n", data[testData[i] / 8]);
+    printf("data: %x\n", data[testData[i] / 8]);
   }
 
   for(i = 0; i < MAX - key; i++)
