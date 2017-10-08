@@ -18,3 +18,18 @@ Finally some PIDs can be assigned to the given cgroup:
     echo 5678 > /sys/fs/cgroup/net_cls/foobar/tasks
 
 Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 and 5678 be pushed into class 1:2.
+
+# Control pointed process's cpu resources
+1. create a running process with a shell script
+    x=0
+    while [ True ];do
+        x=$x+1
+    done;
+2. check
+    top
+3. control it
+mkdir -p /cgroup/cpu/foo/   # create a new control group 'foo'
+echo 50000 > /cgroup/cpu/foo/cpu.cfs_quota_us  # set cpu.cfs_quota_us as 50000，just like 50% with cpu.cfs_period_us's 100000
+echo 30142 > /cgroup/cpu/foo/tasks
+
+4. check it again
