@@ -45,3 +45,30 @@ Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 
 + check it again
 
   `top`
+
+# Control pointed process's memory resources
+
++ create a running process with a shell script
+
+  ```
+    x="a"
+    while [ True ];do
+      x=$x$x
+    done;
+  ```
+
++ check
+
+  `top`
+
++ control it
+
+  ```
+    mkdir -p /cgroup/memory/foo
+    echo 1048576 >  /cgroup/memory/foo/memory.limit_in_bytes   # give this group 1MB space
+    echo 30215 > /cgroup/memory/foo/tasks  
+  ```
+
++ check it again
+
+  `top`
