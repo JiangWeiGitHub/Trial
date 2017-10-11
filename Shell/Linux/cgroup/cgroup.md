@@ -19,7 +19,7 @@ Finally some PIDs can be assigned to the given cgroup:
 
 Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 and 5678 be pushed into class 1:2.-->
 
-# Control pointed process's cpu resources
+# Control specified process's cpu resources
 
 + create a running process with a shell script
 
@@ -46,7 +46,7 @@ Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 
 
   `top`
 
-# Control pointed process's memory resources
+# Control specified process's memory resources
 
 + create a running process with a shell script
 
@@ -72,3 +72,25 @@ Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 
 + check it again
 
   `top`
+
+# Control specified process's io resources
+
++ create a running process
+
+  `dd if=/dev/sda of=/dev/null &`
+
++ check
+
+  `iotop`
+
++ control it
+
+  ```
+    mkdir -p /cgroup/blkio/foo
+    echo '8:0   1048576' >  /cgroup/blkio/foo/blkio.throttle.read_bps_device # 8:0 check from ls -l /dev/sda
+    echo 30252 > /cgroup/blkio/foo/tasks
+  ```
+
++ check it again
+
+  `iotop`
