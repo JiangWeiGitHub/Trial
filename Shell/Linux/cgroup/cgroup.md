@@ -20,6 +20,7 @@ Finally some PIDs can be assigned to the given cgroup:
 Now by simply attaching a cgroup filter to a qdisc makes packets from PIDs 1234 and 5678 be pushed into class 1:2.-->
 
 # Reference: [Docker & cgroups](http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation)
+# Reference: [cgroups](https://www.mjmwired.net/kernel/Documentation/cgroups.txt)
 
 # Control specified process's cpu resources
 
