@@ -70,4 +70,4 @@ then
   exit 1008
 fi
 
-./${xtMainFile}
+./${xtMainFile} -f
