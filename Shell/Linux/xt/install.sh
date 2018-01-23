@@ -80,13 +80,26 @@ tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
 ./install.sh
 
+#############################################################################################
+echo "##########################################"
+
+machineNumber=0
+machineType={0}
+machineIP={"127.0.0.1"}
+
+databaseMachine=0
+singleType=0
+singleIP="127.0.0.1"
+localhostIP="127.0.0.1"
+localhostID=0
+
 echo "Get Machine Infor..."
 read -p "Input Machine Number:" machineNumber
 echo "Machine Number is: $machineNumber"
 
-databaseMachine=0
-singleType=0
-singleIP=0
+echo "Get Localhost Infor..."
+read -p "Input Localhost IP:" localhostIP
+echo "Localhost Machine is: $localhostIP"
 
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
@@ -148,18 +161,20 @@ done
 cp /home/coremail/conf/datasources.cf /home/coremail/var/mainconfig/datasources.cf
 
 echo "Edit iplimit.cf..."
-arriprange=("iprange4" "iprange5" "iprange6" "iprange7" "iprange8" "iprange9" "iprange10" "iprange11" "iprange12")
+sed -i '/^$/d' /home/coremail/conf/iplimit.cf
+#arriprange=("iprange4" "iprange5" "iprange6" "iprange7" "iprange8" "iprange9" "iprange10" "iprange11" "iprange12")
 if [[ ${singleType} -eq 0 ]]
 then
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i '/\command setting/i\${arriprange[i]}="${machineIP[i]}:a:0:10000"' /home/coremail/conf/iplimit.cf
+  sed -i '/\command setting/i\iprange${i+3}="${machineIP[i]}:a:0:10000"\n' /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
     exit 1009
   fi
-  sed -i '/\nolimit/i\${arriprange[i]}="${machineIP[i]}:a:0:10000"' /home/coremail/conf/iplimit.cf
+
+  sed -i '/\nolimit/i\iprange${i+3}="${machineIP[i]}:a:0:10000"\n' /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
@@ -171,6 +186,136 @@ fi
 
 cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimits.cf
 
+echo "Edit hosts.cf..."
+if [[ ${machineNumber} -eq 1 ]]
+then
+  echo "111111"
+elif [[ ${machineNumber} -eq 2 ]]
+then
+  echo "222222"      
+elif [[ ${machineNumber} -eq 3 ]]
+then
+  echo "#! Encoding UTF-8" > /home/coremail/conf/hosts.cf
+  echo "" >> /home/coremail/conf/hosts.cf
+  echo "[${machineIP[1]}]" >> /home/coremail/conf/hosts.cf
+  echo "IP=\"${machineIP[1]}\"" >> /home/coremail/conf/hosts.cf
+  echo "ProgramsList=\"adminsvr,wmsvr,session,pop3svr,scequerysvr,mtasvr,deliveragent,imapsvr,timedsend,convertlog,liveupdate,sysmonitor,mailsms,nginx,mlstsvr,siosvr,LicenseExpiredRemind,mscache,NginxLogRotate,antivirus\"" >> /home/coremail/conf/hosts.cf
+  echo "WebServerID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "WebLoginParameters=\"webprefix=@login\"" >> /home/coremail/conf/hosts.cf
+  echo "WMWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "ASQID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "SESID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "SESWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "SMTPServerType=\"smtp,mx\"" >> /home/coremail/conf/hosts.cf
+  echo "Pop3CheckResource=\"0\"" >> /home/coremail/conf/hosts.cf
+  echo "SmtpCheckResource=\"0\"" >> /home/coremail/conf/hosts.cf
+  echo "SIOStatNotify=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "SIOID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "MLSTID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "MSCacheID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "AVID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "" >> /home/coremail/conf/hosts.cf
+  echo "[${machineIP[2]}]" > /home/coremail/conf/hosts.cf
+  echo "IP=\"${machineIP[2]}\"" >> /home/coremail/conf/hosts.cf
+  echo "ProgramsList=\"adminsvr,wmsvr,session,pop3svr,scequerysvr,mtasvr,deliveragent,imapsvr,convertlog,liveupdate,sysmonitor,mailsms,nginx,mlstsvr,siosvr,LicenseExpiredRemind,mscache,NginxLogRotate,antivirus\"" >> /home/coremail/conf/hosts.cf
+  echo "WebServerID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "WebLoginParameters=\"webprefix=@login\"" >> /home/coremail/conf/hosts.cf
+  echo "WMWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "ASQID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "SESID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "SESWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "SMTPServerType=\"smtp,mx\"" >> /home/coremail/conf/hosts.cf
+  echo "Pop3CheckResource=\"0\"" >> /home/coremail/conf/hosts.cf
+  echo "SmtpCheckResource=\"0\"" >> /home/coremail/conf/hosts.cf
+  echo "SIOStatNotify=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "SIOID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "MLSTID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "MSCacheID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "AVID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "" >> /home/coremail/conf/hosts.cf
+  echo "[${machineIP[3]}]" >> /home/coremail/conf/hosts.cf
+  echo "IP=\"${machineIP[3]}\"" >> /home/coremail/conf/hosts.cf
+  echo "ProgramsList=\"RmiServer,mssvr,udsvr,mdsvr,adminsvr,convertlog,udext,sysmonitor,searchsvr,SysScanPeriod\"" >> /home/coremail/conf/hosts.cf
+  echo "MDID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "MDWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "UDID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "UDWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "UDDataDir=\"/home/coremail/var/ud\"" >> /home/coremail/conf/hosts.cf
+  echo "UDDiskRate=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "MSID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "MSWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "MSDataDir=\"/home/coremail/var/ms\"" >> /home/coremail/conf/hosts.cf
+  echo "MSDiskRate=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "MSTimeHashDirCount=\"20\"" >> /home/coremail/conf/hosts.cf
+  echo "MSUserHashDirCount=\"20\"" >> /home/coremail/conf/hosts.cf
+  echo "SearchID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "SearchDataDir=\"/home/coremail/var/search/data\"" >> /home/coremail/conf/hosts.cf
+  echo "SearchDiskRate=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "TrsMSWeight=\"10\"" >> /home/coremail/conf/hosts.cf
+  echo "BackupDir=\"/home/coremail/var/backup\"" >> /home/coremail/conf/hosts.cf
+  echo "" >> /home/coremail/conf/hosts.cf
+elif [[ ${machineNumber} -eq 4 ]]
+then
+  echo "444444"
+fi
 
+cp /home/coremail/conf/hosts.cf /home/coremail/var/mainconfig/hosts.cf
 
+echo "Edit coremail.cf.cf..."
+tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed  -n "${localhostIP}/p"`
+if [[ ${tmp} == ${localhostIP} ]]
+then
+  num=${#machineIP[@]}
+  for((i=1;i<=num;i++));
+  do
+    if [[ ${machineIP[i]} == ${localhostIP} ]]
+    then
+      if [[ ${machineType[i]} -eq 1 ]]
+      then
+        echo "#! Encoding UTF-8" > /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[Default]" >> /home/coremail/conf/coremail.cf
+        echo "Hostid=\"${localhostIP}\"" >> /home/coremail/conf/coremail.cf
+        echo "MainAdminSvrHost=\"${machineIP[3]}\"" >> /home/coremail/conf/coremail.cf
+        echo "MainAdminSvrPort=\"6130\"" >> /home/coremail/conf/coremail.cf
+        echo "IamMainAdminSvr=\"0\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[Environment]" >> /home/coremail/conf/coremail.cf
+        echo "ORACLE_HOME=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "ORACLE_BASE=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "NLS_LANG=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "ORA_NLS33=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[ReloadEnvironment]" >> /home/coremail/conf/coremail.cf
+        echo "LD_PRELOAD=\"$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+      elif [[ ${machineType[i]} -eq 2 ]]
+      then
+        echo "222222"      
+      elif [[ ${machineType[i]} -eq 3 ]]
+      then
+        echo "#! Encoding UTF-8" > /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[Default]" >> /home/coremail/conf/coremail.cf
+        echo "Hostid=\"${localhostIP}\"" >> /home/coremail/conf/coremail.cf
+        echo "MainAdminSvrHost=\"${localhostIP}\"" >> /home/coremail/conf/coremail.cf
+        echo "MainAdminSvrPort=\"6130\"" >> /home/coremail/conf/coremail.cf
+        echo "IamMainAdminSvr=\"1\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[Environment]" >> /home/coremail/conf/coremail.cf
+        echo "ORACLE_HOME=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "ORACLE_BASE=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "NLS_LANG=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "ORA_NLS33=\"\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+        echo "[ReloadEnvironment]" >> /home/coremail/conf/coremail.cf
+        echo "LD_PRELOAD=\"$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
+        echo "" >> /home/coremail/conf/coremail.cf
+      elif [[ ${machineType[i]} -eq 4 ]]
+      then
+        echo "444444"
+      fi
+    fi
+  done
 
+fi
