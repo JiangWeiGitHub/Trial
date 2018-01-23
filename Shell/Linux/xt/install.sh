@@ -79,3 +79,27 @@ cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
 ./install.sh
+
+echo "Get Machine Infor..."
+read -p "Input Machine Number:" machineNumber
+echo "Machine Number is: $machineNumber"
+
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  read -p "Input Machine Type ( 1 - Front End /2 - Back End ): " machineType[i]
+  read -p "Input Machine IP: " machineIP[i]
+  echo "Machine Infor is: ${machineType[i]} ${machineIP[i]}"
+done
+
+echo "Modify MySQL..."
+passWord=`awk 'NR==2 {print $3}' /home/coremail/bin/mysql_cm | awk '{print substr($0,3)}'`
+
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  /home/coremail/mysql/bin/mysql -uroot -p${passWord} -h127.0.0.1 -P3308 <<EOF
+    use cmxt;
+    GRANT ALL PRIVILEGES ON *.* TO 'coremail'@'${machineIP[i]}' IDENTIFIED BY '${passWord}';
+EOF
+done
+
+
