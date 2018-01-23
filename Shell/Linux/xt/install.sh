@@ -144,7 +144,6 @@ do
     echo "Error: Modify programs.cf Failed!"
     exit 1009
   fi
-EOF
 done
 
 cp /home/coremail/conf/programs.cf /home/coremail/var/mainconfig/programs.cf
@@ -158,7 +157,6 @@ do
     echo "Error: Modify datasources.cf Failed!"
     exit 1009
   fi
-EOF
 done
 
 cp /home/coremail/conf/datasources.cf /home/coremail/var/mainconfig/datasources.cf
@@ -183,7 +181,6 @@ do
     echo "Error: Modify iplimit.cf Failed!"
     exit 1010
   fi
-EOF
 done
 fi
 
@@ -264,12 +261,12 @@ fi
 
 cp /home/coremail/conf/hosts.cf /home/coremail/var/mainconfig/hosts.cf
 
-echo "Edit coremail.cf.cf..."
-tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed  -n "${localhostIP}/p"`
+echo "Edit coremail.cf..."
+tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed -n "/${localhostIP}/p"`
 if [[ ${tmp} == ${localhostIP} ]]
 then
   num=${#machineIP[@]}
-  for((i=1;i<=num;i++));
+  for((i=1;i<num;i++));
   do
     if [[ ${machineIP[i]} == ${localhostIP} ]]
     then
@@ -312,7 +309,7 @@ then
         echo "ORA_NLS33=\"\"" >> /home/coremail/conf/coremail.cf
         echo "" >> /home/coremail/conf/coremail.cf
         echo "[ReloadEnvironment]" >> /home/coremail/conf/coremail.cf
-        echo "LD_PRELOAD=\"$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
+        echo "LD_PRELOAD=\"\$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
         echo "" >> /home/coremail/conf/coremail.cf
       elif [[ ${machineType[i]} -eq 4 ]]
       then
@@ -323,11 +320,11 @@ then
 fi
 
 echo "Edit cmctrl.sh..."
-tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed  -n "${localhostIP}/p"`
+tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed -n "/${localhostIP}/p"`
 if [[ ${tmp} == ${localhostIP} ]]
 then
   num=${#machineIP[@]}
-  for((i=1;i<=num;i++));
+  for((i=1;i<num;i++));
   do
     if [[ ${machineIP[i]} == ${localhostIP} ]]
     then
