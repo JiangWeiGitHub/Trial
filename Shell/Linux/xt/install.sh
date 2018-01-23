@@ -317,5 +317,33 @@ then
       fi
     fi
   done
-
 fi
+
+echo "Edit cmctrl.sh..."
+tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed  -n "${localhostIP}/p"`
+if [[ ${tmp} == ${localhostIP} ]]
+then
+  num=${#machineIP[@]}
+  for((i=1;i<=num;i++));
+  do
+    if [[ ${machineIP[i]} == ${localhostIP} ]]
+    then
+      if [[ ${machineType[i]} -eq 1 ]]
+      then
+        `sed -i 's/CONTROL_MYSQL=\"1\"/CONTROL_MYSQL=\"0\"/' /etc/selinux/config`
+      elif [[ ${machineType[i]} -eq 2 ]]
+      then
+        echo "222222"      
+      elif [[ ${machineType[i]} -eq 3 ]]
+      then
+        echo "No change"
+      elif [[ ${machineType[i]} -eq 4 ]]
+      then
+        echo "444444"
+      fi
+    fi
+  done
+fi
+
+echo "Start All Processes except MySQL..."
+/home/coremail/bin/coremail start all
