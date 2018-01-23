@@ -168,7 +168,7 @@ if [[ ${singleType} -eq 0 ]]
 then
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i "s/iprangecount=\"$(($i+2))\"/iprangecount=\"$(($i+3))\"" /home/coremail/conf/iplimit.cf
+  sed -i "s/iprangecount=\"$(($i+2))\"/iprangecount=\"$(($i+3))\"/" /home/coremail/conf/iplimit.cf
 
   sed -i "/command setting/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
