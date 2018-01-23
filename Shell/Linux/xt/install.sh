@@ -287,7 +287,7 @@ then
         echo "ORA_NLS33=\"\"" >> /home/coremail/conf/coremail.cf
         echo "" >> /home/coremail/conf/coremail.cf
         echo "[ReloadEnvironment]" >> /home/coremail/conf/coremail.cf
-        echo "LD_PRELOAD=\"$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
+        echo "LD_PRELOAD=\"\$(COREMAIL_HOME)/lib64/libtcmalloc.so.4\"" >> /home/coremail/conf/coremail.cf
         echo "" >> /home/coremail/conf/coremail.cf
       elif [[ ${machineType[i]} -eq 2 ]]
       then
