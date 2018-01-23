@@ -84,11 +84,25 @@ echo "Get Machine Infor..."
 read -p "Input Machine Number:" machineNumber
 echo "Machine Number is: $machineNumber"
 
+databaseMachine=0
+singleType=0
+singleIP=0
+
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  read -p "Input Machine Type ( 1 - Front End /2 - Back End ): " machineType[i]
+  read -p "Input Machine Type ( 1 FrontEnd / 2 BackEnd NoDatabase / 3 BackEnd Database / 4 AllInOne ): " machineType[i]
   read -p "Input Machine IP: " machineIP[i]
   echo "Machine Infor is: ${machineType[i]} ${machineIP[i]}"
+  if [[ ${machineType[i]} -eq 3 ]]
+  then
+    echo "Infor: Database Machine!"
+    databaseMachine=${machineIP[i]}
+  elif [[ ${machineType[i]} -eq 4 ]]
+  then 
+    echo "Infor: Single Machine!"
+    singleType=1
+    singleIP=${machineIP[i]}
+  fi
 done
 
 echo "Modify MySQL..."
@@ -101,5 +115,62 @@ do
     GRANT ALL PRIVILEGES ON *.* TO 'coremail'@'${machineIP[i]}' IDENTIFIED BY '${passWord}';
 EOF
 done
+
+echo "Stop All Processes except MySQL..."
+/home/coremail/bin/coremail stop all
+
+echo "Edit programs.cf..."
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  sed -i '/FreeIPList/{s/"/,${machineIP[i]}"/2}' /home/coremail/conf/programs.cf
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error: Modify programs.cf Failed!"
+    exit 1009
+  fi
+EOF
+done
+
+cp /home/coremail/conf/programs.cf /home/coremail/var/mainconfig/programs.cf
+
+echo "Edit datasources.cf..."
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  sed -i 's/Server="127.0.0.1"/Server="${databaseMachine}"/' /home/coremail/conf/datasources.cf
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error: Modify datasources.cf Failed!"
+    exit 1009
+  fi
+EOF
+done
+
+cp /home/coremail/conf/datasources.cf /home/coremail/var/mainconfig/datasources.cf
+
+echo "Edit iplimit.cf..."
+arriprange=("iprange4" "iprange5" "iprange6" "iprange7" "iprange8" "iprange9" "iprange10" "iprange11" "iprange12")
+if [[ ${singleType} -eq 0 ]]
+then
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  sed -i '/\command setting/i\${arriprange[i]}="${machineIP[i]}:a:0:10000"' /home/coremail/conf/iplimit.cf
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error: Modify iplimit.cf Failed!"
+    exit 1009
+  fi
+  sed -i '/\nolimit/i\${arriprange[i]}="${machineIP[i]}:a:0:10000"' /home/coremail/conf/iplimit.cf
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error: Modify iplimit.cf Failed!"
+    exit 1010
+  fi
+EOF
+done
+fi
+
+cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimits.cf
+
+
 
 
