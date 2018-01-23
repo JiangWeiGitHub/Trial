@@ -168,14 +168,16 @@ if [[ ${singleType} -eq 0 ]]
 then
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i "/\command setting/i\iprange${i+3}=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
+  sed -i "s/iprangecount=\"$(($i+2))\"/iprangecount=\"$(($i+3))\"" /home/coremail/conf/iplimit.cf
+
+  sed -i "/command setting/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
     exit 1009
   fi
 
-  sed -i "/\nolimit/i\iprange${i+3}=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
+  sed -i "/nolimit/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
@@ -215,7 +217,7 @@ then
   echo "MSCacheID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "AVID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "" >> /home/coremail/conf/hosts.cf
-  echo "[${machineIP[2]}]" > /home/coremail/conf/hosts.cf
+  echo "[${machineIP[2]}]" >> /home/coremail/conf/hosts.cf
   echo "IP=\"${machineIP[2]}\"" >> /home/coremail/conf/hosts.cf
   echo "ProgramsList=\"adminsvr,wmsvr,session,pop3svr,scequerysvr,mtasvr,deliveragent,imapsvr,convertlog,liveupdate,sysmonitor,mailsms,nginx,mlstsvr,siosvr,LicenseExpiredRemind,mscache,NginxLogRotate,antivirus\"" >> /home/coremail/conf/hosts.cf
   echo "WebServerID=\"2\"" >> /home/coremail/conf/hosts.cf
@@ -330,7 +332,7 @@ then
     then
       if [[ ${machineType[i]} -eq 1 ]]
       then
-        `sed -i 's/CONTROL_MYSQL=\"1\"/CONTROL_MYSQL=\"0\"/' /etc/selinux/config`
+        `sed -i 's/CONTROL_MYSQL=\"1\"/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh`
       elif [[ ${machineType[i]} -eq 2 ]]
       then
         echo "222222"      
