@@ -72,6 +72,9 @@ fi
 
 ./${xtMainFile} -f
 
+echo "Configure Webadmin..."
+read -p "Have you done it? ( Yes/No )" tmp
+
 echo "Install clamav..."
 yum install libtool-ltdl-2.2.6-15.5.el6.x86_64
 cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
