@@ -138,7 +138,7 @@ echo "Stop All Processes except MySQL..."
 echo "Edit programs.cf..."
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i '/FreeIPList/{s/"/,${machineIP[i]}"/2}' /home/coremail/conf/programs.cf
+  sed -i "/FreeIPList/{s/\"/,${machineIP[i]}\"/2}" /home/coremail/conf/programs.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify programs.cf Failed!"
@@ -151,7 +151,7 @@ cp /home/coremail/conf/programs.cf /home/coremail/var/mainconfig/programs.cf
 echo "Edit datasources.cf..."
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i 's/Server="127.0.0.1"/Server="${databaseMachine}"/' /home/coremail/conf/datasources.cf
+  sed -i "s/Server=\"127.0.0.1\"/Server=\"${databaseMachine}\"/" /home/coremail/conf/datasources.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify datasources.cf Failed!"
@@ -168,14 +168,14 @@ if [[ ${singleType} -eq 0 ]]
 then
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  sed -i '/\command setting/i\iprange${i+3}="${machineIP[i]}:a:0:10000"\n' /home/coremail/conf/iplimit.cf
+  sed -i "/\command setting/i\iprange${i+3}=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
     exit 1009
   fi
 
-  sed -i '/\nolimit/i\iprange${i+3}="${machineIP[i]}:a:0:10000"\n' /home/coremail/conf/iplimit.cf
+  sed -i "/\nolimit/i\iprange${i+3}=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
