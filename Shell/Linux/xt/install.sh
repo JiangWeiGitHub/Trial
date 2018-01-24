@@ -170,23 +170,25 @@ for((i=1;i<=`expr ${machineNumber}`;i++));
 do
   sed -i "s/iprangecount=\"$(($i+2))\"/iprangecount=\"$(($i+3))\"/" /home/coremail/conf/iplimit.cf
 
-  sed -i "/command setting/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
+  sed -i "/command setting/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
     exit 1009
   fi
 
-  sed -i "/nolimit/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"\n" /home/coremail/conf/iplimit.cf
+  sed -i "/nolimit/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
     exit 1010
   fi
 done
+sed -i "/command setting/i\\n" /home/coremail/conf/iplimit.cf
+sed -i "/nolimit/i\\n" /home/coremail/conf/iplimit.cf
 fi
 
-cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimits.cf
+cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimit.cf
 
 echo "Edit hosts.cf..."
 if [[ ${machineNumber} -eq 1 ]]
