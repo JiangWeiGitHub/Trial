@@ -184,8 +184,8 @@ do
     exit 1010
   fi
 done
-sed -i "/command setting/i\\n" /home/coremail/conf/iplimit.cf
-sed -i "/nolimit/i\\n" /home/coremail/conf/iplimit.cf
+sed -i "/command setting/i\ " /home/coremail/conf/iplimit.cf
+sed -i "/nolimit/i\ " /home/coremail/conf/iplimit.cf
 fi
 
 cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimit.cf
