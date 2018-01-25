@@ -217,6 +217,7 @@ then
   echo "SIOID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "MLSTID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "MSCacheID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "JAPIID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "AVID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "" >> /home/coremail/conf/hosts.cf
   echo "[${machineIP[2]}]" >> /home/coremail/conf/hosts.cf
@@ -235,6 +236,7 @@ then
   echo "SIOID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "MLSTID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "MSCacheID=\"2\"" >> /home/coremail/conf/hosts.cf
+  echo "JAPIID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "AVID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "" >> /home/coremail/conf/hosts.cf
   echo "[${machineIP[3]}]" >> /home/coremail/conf/hosts.cf
@@ -349,5 +351,11 @@ then
   done
 fi
 
-echo "Start All Processes except MySQL..."
-/home/coremail/bin/coremail start all
+echo "Set Startup..."
+\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail
+chkconfig --add coremail
+chkconfig coremail on
+
+echo "Stop All Programs..."
+/home/coremail/sbin/cmctrl.sh stop all
+
