@@ -375,6 +375,8 @@ do
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
         chkconfig --add coremail && \
         chkconfig coremail on && \
+        useradd coremail && \
+        chown coremail:coremail /home/coremail -R && \
         service postfix stop && \
         chkconfig postfix off && \
         setenforce 0 && \
@@ -394,6 +396,8 @@ do
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
         chkconfig --add coremail && \
         chkconfig coremail on && \
+        useradd coremail && \
+        chown coremail:coremail /home/coremail -R && \
         service postfix stop && \
         chkconfig postfix off && \
         setenforce 0 && \
