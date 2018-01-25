@@ -132,8 +132,8 @@ do
 EOF
 done
 
-echo "Stop All Processes except MySQL..."
-/home/coremail/bin/coremail stop all
+echo "Stop All Programs..."
+/home/coremail/sbin/cmctrl.sh stop
 
 echo "Edit programs.cf..."
 for((i=1;i<=`expr ${machineNumber}`;i++));
@@ -355,10 +355,8 @@ echo "Set Startup..."
 chkconfig --add coremail
 chkconfig coremail on
 
-echo "Stop All Programs..."
-/home/coremail/sbin/cmctrl.sh stop all
-
 echo "Copy 'coremail' Folder To Other Machine..."
+yum install rsync-3.0.6-12.el6.x86_64
 for((i=2;i<=`expr ${machineNumber}`;i++));
 do
   read -p "Input Remote Machine IP:" tmpIP
@@ -371,19 +369,28 @@ do
     then
       if [[ ${machineType[i]} -eq 1 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
+        sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf && \
+        sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf && \
+        \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
+        chkconfig --add coremail && \
+        chkconfig coremail on && \
+        service postfix stop && \
+        chkconfig postfix off && \
+        setenforce 0 && \
+        sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config && \
+        service iptables stop && \
+        chkconfig iptables off"
       elif [[ ${machineType[i]} -eq 2 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${tmpIP} "sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
       elif [[ ${machineType[i]} -eq 3 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${tmpIP} "sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf"
       elif [[ ${machineType[i]} -eq 4 ]]
       then
         echo "444444"
