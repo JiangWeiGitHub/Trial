@@ -388,9 +388,18 @@ do
         ssh root@${tmpIP} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
       elif [[ ${machineType[i]} -eq 3 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${tmpIP} "sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${tmpIP} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh && \
+        sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf && \
+        sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf && \
+        \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
+        chkconfig --add coremail && \
+        chkconfig coremail on && \
+        service postfix stop && \
+        chkconfig postfix off && \
+        setenforce 0 && \
+        sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config && \
+        service iptables stop && \
+        chkconfig iptables off"
       elif [[ ${machineType[i]} -eq 4 ]]
       then
         echo "444444"
