@@ -357,7 +357,7 @@ chkconfig coremail on
 
 echo "Copy 'coremail' Folder To Other Machine..."
 yum install rsync-3.0.6-12.el6.x86_64
-for((i=2;i<=`expr ${machineNumber}`;i++));
+for((j=2;i<=`expr ${machineNumber}`;i++));
 do
   read -p "Input Remote Machine IP:" tmpIP
   rsync -aSvH /home/coremail root@${tmpIP}:/home
