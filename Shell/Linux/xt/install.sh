@@ -217,7 +217,6 @@ then
   echo "SIOID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "MLSTID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "MSCacheID=\"1\"" >> /home/coremail/conf/hosts.cf
-  echo "JAPIID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "AVID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "" >> /home/coremail/conf/hosts.cf
   echo "[${machineIP[2]}]" >> /home/coremail/conf/hosts.cf
@@ -236,13 +235,13 @@ then
   echo "SIOID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "MLSTID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "MSCacheID=\"2\"" >> /home/coremail/conf/hosts.cf
-  echo "JAPIID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "AVID=\"2\"" >> /home/coremail/conf/hosts.cf
   echo "" >> /home/coremail/conf/hosts.cf
   echo "[${machineIP[3]}]" >> /home/coremail/conf/hosts.cf
   echo "IP=\"${machineIP[3]}\"" >> /home/coremail/conf/hosts.cf
   echo "ProgramsList=\"RmiServer,mssvr,udsvr,mdsvr,adminsvr,convertlog,udext,sysmonitor,searchsvr,SysScanPeriod\"" >> /home/coremail/conf/hosts.cf
   echo "MDID=\"1\"" >> /home/coremail/conf/hosts.cf
+  echo "JAPIID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "MDWeight=\"10\"" >> /home/coremail/conf/hosts.cf
   echo "UDID=\"1\"" >> /home/coremail/conf/hosts.cf
   echo "UDWeight=\"10\"" >> /home/coremail/conf/hosts.cf
@@ -359,3 +358,46 @@ chkconfig coremail on
 echo "Stop All Programs..."
 /home/coremail/sbin/cmctrl.sh stop all
 
+echo "Copy 'coremail' Folder To Other Machine..."
+for((i=2;i<=`expr ${machineNumber}`;i++));
+do
+  read -p "Input Remote Machine IP:" tmpIP
+  rsync -aSvH /home/coremail root@${tmpIP}:/home
+  
+  for((i=1;i<=`expr ${machineNumber}`;i++));
+  do
+
+    if [[ ${machineIP[i]} == ${tmpIP} ]]
+    then
+      if [[ ${machineType[i]} -eq 1 ]]
+      then
+        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+      elif [[ ${machineType[i]} -eq 2 ]]
+      then
+        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+      elif [[ ${machineType[i]} -eq 3 ]]
+      then
+        ssh root@${tmpIP} "sed -i 's/CONTROL_MYSQL=\"?\"/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${tmpIP} "sed -i 's/Hostid=\"*\"/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${tmpIP} "sed -i 's/IamMainAdminSvr=\"?\"/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf"
+      elif [[ ${machineType[i]} -eq 4 ]]
+      then
+        echo "444444"
+      fi
+    elif [[ ${machineType[i]} -eq 2 ]]
+    then
+      echo "222222"      
+    elif [[ ${machineType[i]} -eq 3 ]]
+    then
+      echo "No change"
+    elif [[ ${machineType[i]} -eq 4 ]]
+    then
+      echo "444444"
+    fi
+  
+  done
+done
