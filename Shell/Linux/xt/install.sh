@@ -2,106 +2,120 @@
 
 set -eu
 
-echo "Reading CSV File..."
+echo "******************Processing CSV File******************"
 # CSV format
 # File Name: list.csv
 # Machine Type, Machine IP, Is Local Machine, Machine Root Password
 # Machine Type: 1 (Front End) 2 (Back End Without Database) 3 (Back End With Database) 4 (All In One)
 # Is Local Machine: 1 (Yes) 0 (No)
 fileName="list.csv"
+
+echo "Check CSV File..."
+if [ ! -f "./${fileName}" ]; then
+  echo "Error: ${fileName} Not Found!"
+  exit 100
+fi
+sleep 1s
+echo "Done."
+
+echo "Reading CSV File..."
 machineNumber=`cat ${fileName} | wc -l`
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
   machineType[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $1; }'`
   machineIP[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $2; }'`
-  
-  
-  
-  
-  echo "Machine Infor is: ${machineType[i]} ${machineIP[i]}"
-  if [[ ${machineType[i]} -eq 3 ]]
-  then
-    echo "Infor: Database Machine!"
-    databaseMachine=${machineIP[i]}
-  elif [[ ${machineType[i]} -eq 4 ]]
-  then 
-    echo "Infor: Single Machine!"
-    singleType=1
-    singleIP=${machineIP[i]}
-  fi
+  machineLocal[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $3; }'`
+  machinePass[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $4; }'`
 done
-
+sleep 1s
 echo "Done!"
 
 echo 'Check Version...'
 strRelease=`cat /etc/redhat-release`
 strGoal="CentOS release 6.9 (Final)"
-
 if [[ $strRelease != *$strGoal* ]]
 then
   echo "Error: Wrong Release Version!"
-  exit 1000
+  exit 101
 fi
+sleep 1s
+echo "Done!"
 
 echo 'Stop & Disable Postfix...'
-postExist=`service postfix stop`
+`service postfix stop`
 if [[ $? -ne 0 ]]
 then
   echo "Error: Stop Postfix Failed!"
-  exit 1001
+  exit 102
 fi
 
-postControl=`chkconfig postfix off`
+`chkconfig postfix off`
 if [[ $? -ne 0 ]]
 then
   echo "Error: Disable Postfix Failed!"
-  exit 1002
+  exit 103
 fi
+sleep 1s
+echo "Done!"
 
 echo 'Disable seLinux...'
-selinuxControl=`setenforce 0`
+`setenforce 0`
 if [[ $? -ne 0 ]]
 then
   echo "Error: Stop seLinux Failed!"
-  exit 1003
+  exit 104
 fi
 
-editselinux=`sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config`
+`sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config`
 if [[ $? -ne 0 ]]
 then
   echo "Error: Disable seLinux Failed!"
-  exit 1004
+  exit 105
 fi
+sleep 1s
+echo "Done!"
 
 echo 'Stop & Disable iptables...'
-iptablesControl=`service iptables stop && chkconfig iptables off`
+`service iptables stop && chkconfig iptables off`
 if [[ $? -ne 0 ]]
 then
   echo "Error: Stop iptables Failed!"
-  exit 1005
+  exit 106
 fi
+sleep 1s
+echo "Done!"
 
 echo 'Chmod XT Files...'
 xtMainFile="cmXT5.0.7-1_ENT_main_RHEL6_x86_64.install.sh"
-if [ ! -f "./$xtMainFile" ]; then
+if [ ! -f "./${xtMainFile}" ]; then
   echo "Error: XT Main File Not Found!"
-  exit 1006
+  exit 107
 fi
 
 xtClamavFile="cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz"
 if [ ! -f "./$xtClamavFile" ]; then
   echo "Error: XT Clamav File Not Found!"
-  exit 1007
+  exit 108
 fi
 
 chmod 755 ./cmXT5.0.7-1_*
 if [[ $? -ne 0 ]]
 then
   echo "Error: Chmod Failed!"
-  exit 1008
+  exit 109
 fi
+sleep 1s
+echo "Done!"
 
+echo 'Installing XT...'
 ./${xtMainFile} -f
+if [[ $? -ne 0 ]]
+then
+  echo "Error: Installation Failed!"
+  exit 110
+fi
+sleep 1s
+echo "Done!"
 
 echo "Configure Webadmin..."
 read -p "Have you done it? ( Yes/No )" tmp
