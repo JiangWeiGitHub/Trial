@@ -2,6 +2,37 @@
 
 set -eu
 
+echo "Reading CSV File..."
+# CSV format
+# File Name: list.csv
+# Machine Type, Machine IP, Is Local Machine, Machine Root Password
+# Machine Type: 1 (Front End) 2 (Back End Without Database) 3 (Back End With Database) 4 (All In One)
+# Is Local Machine: 1 (Yes) 0 (No)
+fileName="list.csv"
+machineNumber=`cat ${fileName} | wc -l`
+for((i=1;i<=`expr ${machineNumber}`;i++));
+do
+  machineType[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $1; }'`
+  machineIP[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $2; }'`
+  
+  
+  
+  
+  echo "Machine Infor is: ${machineType[i]} ${machineIP[i]}"
+  if [[ ${machineType[i]} -eq 3 ]]
+  then
+    echo "Infor: Database Machine!"
+    databaseMachine=${machineIP[i]}
+  elif [[ ${machineType[i]} -eq 4 ]]
+  then 
+    echo "Infor: Single Machine!"
+    singleType=1
+    singleIP=${machineIP[i]}
+  fi
+done
+
+echo "Done!"
+
 echo 'Check Version...'
 strRelease=`cat /etc/redhat-release`
 strGoal="CentOS release 6.9 (Final)"
