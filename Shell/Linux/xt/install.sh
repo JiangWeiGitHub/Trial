@@ -49,45 +49,31 @@ sleep 1s
 echo "Done!"
 
 echo 'Stop & Disable Postfix...'
-`service postfix stop`
+service postfix stop && chkconfig postfix off
 if [[ $? -ne 0 ]]
 then
-  echo "Error: Stop Postfix Failed!"
+  echo "Error: Stop & Disable Postfix Failed!"
   exit 102
 fi
+sleep 1s
+echo "Done!"
 
-`chkconfig postfix off`
+echo 'Stop & Disable seLinux...'
+setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 if [[ $? -ne 0 ]]
 then
-  echo "Error: Disable Postfix Failed!"
+  echo "Error: Stop & Disable seLinux Failed!"
   exit 103
 fi
 sleep 1s
 echo "Done!"
 
-echo 'Disable seLinux...'
-`setenforce 0`
-if [[ $? -ne 0 ]]
-then
-  echo "Error: Stop seLinux Failed!"
-  exit 104
-fi
-
-`sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config`
-if [[ $? -ne 0 ]]
-then
-  echo "Error: Disable seLinux Failed!"
-  exit 105
-fi
-sleep 1s
-echo "Done!"
-
 echo 'Stop & Disable iptables...'
-`service iptables stop && chkconfig iptables off`
+service iptables stop && chkconfig iptables off
 if [[ $? -ne 0 ]]
 then
   echo "Error: Stop iptables Failed!"
-  exit 106
+  exit 104
 fi
 sleep 1s
 echo "Done!"
@@ -96,20 +82,20 @@ echo 'Chmod XT Files...'
 xtMainFile="cmXT5.0.7-1_ENT_main_RHEL6_x86_64.install.sh"
 if [ ! -f "./${xtMainFile}" ]; then
   echo "Error: XT Main File Not Found!"
-  exit 107
+  exit 105
 fi
 
 xtClamavFile="cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz"
 if [ ! -f "./$xtClamavFile" ]; then
   echo "Error: XT Clamav File Not Found!"
-  exit 108
+  exit 106
 fi
 
 chmod 755 ./cmXT5.0.7-1_*
 if [[ $? -ne 0 ]]
 then
   echo "Error: Chmod Failed!"
-  exit 109
+  exit 107
 fi
 sleep 1s
 echo "Done!"
@@ -119,7 +105,7 @@ echo 'Installing XT...'
 if [[ $? -ne 0 ]]
 then
   echo "Error: Installation Failed!"
-  exit 110
+  exit 108
 fi
 sleep 1s
 echo "Done!"
