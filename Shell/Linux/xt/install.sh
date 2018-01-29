@@ -6,6 +6,7 @@ DASH="------------------------------------------------------------"
 
 banner_front()
 {
+	sleep 1s
 	echo ""
 	echo $DASH
 	echo "$1"
@@ -18,6 +19,7 @@ banner_end()
 	echo "$1"
 	echo $DASH
 	echo ""
+	sleep 1s
 }
 
 # CSV format
@@ -32,7 +34,6 @@ if [ ! -f "./${fileName}" ]; then
   echo "Error: ${fileName} Not Found!"
   exit 100
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Reading CSV File"
@@ -49,9 +50,23 @@ do
   echo "machineLocal[i]: ${machineLocal[i]}"
   echo "machinePass[i]: ${machinePass[i]}"
   echo "================================="
-  sleep 1s
+
+	if [[ ${machineType[i]} == "1" ]]
+	then
+		singleType=0
+	elif [[ ${machineType[i]} == "2" ]]
+	then
+		singleType=0
+	elif [[ ${machineType[i]} == "3" ]]
+	then
+		singleType=0
+		databaseMachine=${machineIP[i]}
+	else
+	  singleType=1
+		databaseMachine=${machineIP[i]}
+	fi
+  
 done
-sleep 1s
 banner_end "Done"
 
 banner_front "Check Version"
@@ -62,7 +77,6 @@ then
   echo "Error: Wrong Release Version!"
   exit 101
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Stop & Disable Postfix"
@@ -72,7 +86,6 @@ then
   echo "Error: Stop & Disable Postfix Failed!"
   exit 102
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Stop & Disable seLinux"
@@ -82,7 +95,6 @@ then
   echo "Error: Stop & Disable seLinux Failed!"
   exit 103
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Stop & Disable iptables"
@@ -92,7 +104,6 @@ then
   echo "Error: Stop iptables Failed!"
   exit 104
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Chmod XT Files"
@@ -114,7 +125,6 @@ then
   echo "Error: Chmod Failed!"
   exit 107
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Check CSV File"
@@ -125,7 +135,6 @@ then
   echo "Error: Installation Failed!"
   exit 108
 fi
-sleep 1s
 banner_end "Done"
 
 banner_front "Configure Webadmin"
@@ -134,7 +143,6 @@ while [[ ${webInit} != "Yes" ]]
 do
   read -p "Have you done it? ( Yes )" webInit
 done
-sleep 1s
 banner_end "Done"
 
 banner_front "Install clamav"
@@ -144,48 +152,14 @@ cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
 ./install.sh
-sleep 1s
+if [[ $? -ne 0 ]]
+then
+  echo "Error: Installation Failed!"
+  exit 109
+fi
 banner_end "Done"
 
-#############################################################################################
-echo "##########################################"
-
-machineNumber=0
-machineType={0}
-machineIP={"127.0.0.1"}
-
-databaseMachine=0
-singleType=0
-singleIP="127.0.0.1"
-localhostIP="127.0.0.1"
-localhostID=0
-
-echo "Get Machine Infor..."
-read -p "Input Machine Number:" machineNumber
-echo "Machine Number is: $machineNumber"
-
-echo "Get Localhost Infor..."
-read -p "Input Localhost IP:" localhostIP
-echo "Localhost Machine is: $localhostIP"
-
-for((i=1;i<=`expr ${machineNumber}`;i++));
-do
-  read -p "Input Machine Type ( 1 FrontEnd / 2 BackEnd NoDatabase / 3 BackEnd Database / 4 AllInOne ): " machineType[i]
-  read -p "Input Machine IP: " machineIP[i]
-  echo "Machine Infor is: ${machineType[i]} ${machineIP[i]}"
-  if [[ ${machineType[i]} -eq 3 ]]
-  then
-    echo "Infor: Database Machine!"
-    databaseMachine=${machineIP[i]}
-  elif [[ ${machineType[i]} -eq 4 ]]
-  then 
-    echo "Infor: Single Machine!"
-    singleType=1
-    singleIP=${machineIP[i]}
-  fi
-done
-
-echo "Modify MySQL..."
+banner_front "Modify MySQL"
 passWord=`awk 'NR==2 {print $3}' /home/coremail/bin/mysql_cm | awk '{print substr($0,3)}'`
 
 for((i=1;i<=`expr ${machineNumber}`;i++));
@@ -195,39 +169,47 @@ do
     GRANT ALL PRIVILEGES ON *.* TO 'coremail'@'${machineIP[i]}' IDENTIFIED BY '${passWord}';
 EOF
 done
+banner_end "Done"
 
-echo "Stop All Programs..."
+banner_front "Stop All Programs"
 /home/coremail/sbin/cmctrl.sh stop
+if [[ $? -ne 0 ]]
+then
+  echo "Error: Stop All Failed!"
+  exit 110
+fi
+banner_end "Done"
 
-echo "Edit programs.cf..."
+banner_front "Edit programs.cf"
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
   sed -i "/FreeIPList/{s/\"/,${machineIP[i]}\"/2}" /home/coremail/conf/programs.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify programs.cf Failed!"
-    exit 1009
+    exit 111
   fi
 done
 
 cp /home/coremail/conf/programs.cf /home/coremail/var/mainconfig/programs.cf
+banner_end "Done"
 
-echo "Edit datasources.cf..."
+banner_front "Edit datasources.cf"
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
   sed -i "s/Server=\"127.0.0.1\"/Server=\"${databaseMachine}\"/" /home/coremail/conf/datasources.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify datasources.cf Failed!"
-    exit 1009
+    exit 112
   fi
 done
 
 cp /home/coremail/conf/datasources.cf /home/coremail/var/mainconfig/datasources.cf
+banner_end "Done"
 
-echo "Edit iplimit.cf..."
+banner_front "Edit iplimit.cf"
 sed -i '/^$/d' /home/coremail/conf/iplimit.cf
-#arriprange=("iprange4" "iprange5" "iprange6" "iprange7" "iprange8" "iprange9" "iprange10" "iprange11" "iprange12")
 if [[ ${singleType} -eq 0 ]]
 then
 for((i=1;i<=`expr ${machineNumber}`;i++));
@@ -238,14 +220,14 @@ do
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
-    exit 1009
+    exit 113
   fi
 
   sed -i "/nolimit/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
     echo "Error: Modify iplimit.cf Failed!"
-    exit 1010
+    exit 114
   fi
 done
 sed -i "/command setting/i\ " /home/coremail/conf/iplimit.cf
@@ -253,8 +235,9 @@ sed -i "/nolimit/i\ " /home/coremail/conf/iplimit.cf
 fi
 
 cp /home/coremail/conf/iplimit.cf /home/coremail/var/mainconfig/iplimit.cf
+banner_end "Done"
 
-echo "Edit hosts.cf..."
+banner_front "Edit hosts.cf"
 if [[ ${machineNumber} -eq 1 ]]
 then
   echo "111111"
