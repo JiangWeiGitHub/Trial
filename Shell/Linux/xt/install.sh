@@ -65,7 +65,12 @@ do
 	  singleType=1
 		databaseMachine=${machineIP[i]}
 	fi
-  
+	
+	if [[ ${machineLocal[i]} == "1" ]]
+	then
+		localhostIP=${machineIP[i]}
+	fi
+
 done
 banner_end "Done"
 
@@ -127,7 +132,7 @@ then
 fi
 banner_end "Done"
 
-banner_front "Check CSV File"
+banner_front "Installation XT"
 echo 'Installing XT...'
 ./${xtMainFile} -f
 if [[ $? -ne 0 ]]
