@@ -2,7 +2,24 @@
 
 set -eu
 
-echo "******************Processing CSV File******************"
+DASH="------------------------------------------------------------"
+
+banner_front()
+{
+	echo ""
+	echo $DASH
+	echo "$1"
+	echo ""
+}
+
+banner_end()
+{
+	echo ""
+	echo "$1"
+	echo $DASH
+	echo ""
+}
+
 # CSV format
 # File Name: list.csv
 # Machine Type, Machine IP, Is Local Machine, Machine Root Password
@@ -10,15 +27,15 @@ echo "******************Processing CSV File******************"
 # Is Local Machine: 1 (Yes) 0 (No)
 fileName="list.csv"
 
-echo "Check CSV File..."
+banner_front "Check CSV File"
 if [ ! -f "./${fileName}" ]; then
   echo "Error: ${fileName} Not Found!"
   exit 100
 fi
 sleep 1s
-echo "Done."
+banner_end "Done"
 
-echo "Reading CSV File..."
+banner_front "Reading CSV File"
 machineNumber=`cat ${fileName} | wc -l`
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
@@ -35,9 +52,9 @@ do
   sleep 1s
 done
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo 'Check Version...'
+banner_front "Check Version"
 strRelease=`cat /etc/redhat-release`
 strGoal="CentOS release 6.9 (Final)"
 if [[ $strRelease != *$strGoal* ]]
@@ -46,9 +63,9 @@ then
   exit 101
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo 'Stop & Disable Postfix...'
+banner_front "Stop & Disable Postfix"
 service postfix stop && chkconfig postfix off
 if [[ $? -ne 0 ]]
 then
@@ -56,9 +73,9 @@ then
   exit 102
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo 'Stop & Disable seLinux...'
+banner_front "Stop & Disable seLinux"
 setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 if [[ $? -ne 0 ]]
 then
@@ -66,9 +83,9 @@ then
   exit 103
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo 'Stop & Disable iptables...'
+banner_front "Stop & Disable iptables"
 service iptables stop && chkconfig iptables off
 if [[ $? -ne 0 ]]
 then
@@ -76,9 +93,9 @@ then
   exit 104
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo 'Chmod XT Files...'
+banner_front "Chmod XT Files"
 xtMainFile="cmXT5.0.7-1_ENT_main_RHEL6_x86_64.install.sh"
 if [ ! -f "./${xtMainFile}" ]; then
   echo "Error: XT Main File Not Found!"
@@ -98,8 +115,9 @@ then
   exit 107
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
+banner_front "Check CSV File"
 echo 'Installing XT...'
 ./${xtMainFile} -f
 if [[ $? -ne 0 ]]
@@ -108,18 +126,18 @@ then
   exit 108
 fi
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo "Configure Webadmin..."
+banner_front "Configure Webadmin"
 webInit=1
 while [[ ${webInit} != "Yes" ]]
 do
-  read -p "Have you done it? ( Yes/No )" webInit
+  read -p "Have you done it? ( Yes )" webInit
 done
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
-echo "Install clamav..."
+banner_front "Install clamav"
 yum install libtool-ltdl-2.2.6-15.5.el6.x86_64
 cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
 cd /home/coremail/
@@ -127,7 +145,7 @@ tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
 ./install.sh
 sleep 1s
-echo "Done!"
+banner_end "Done"
 
 #############################################################################################
 echo "##########################################"
