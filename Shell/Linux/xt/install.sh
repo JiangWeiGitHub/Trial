@@ -38,7 +38,7 @@ banner_end "Done"
 
 banner_front "Reading CSV File"
 machineNumber=`cat ${fileName} | wc -l`
-for((i=1;i<=`expr ${machineNumber}`;i++));
+for((i=1,j=1;i<=`expr ${machineNumber}`;i++));
 do
   machineType[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $1; }'`
   machineIP[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $2; }'`
@@ -69,6 +69,9 @@ do
   if [[ ${machineLocal[i]} == "1" ]]
   then
     localhostIP=${machineIP[i]}
+  else
+    remoteMachine[j]=${machineIP[i]}
+    j=$((${j}+1))
   fi
 
 done
@@ -146,12 +149,12 @@ banner_front "Configure Webadmin"
 webInit=1
 while [[ ${webInit} != "Yes" ]]
 do
-  read -p "Have you done it? ( Yes )" webInit
+  read -p "Have you done it? ( Yes ) : " webInit
 done
 banner_end "Done"
 
 banner_front "Install clamav"
-yum install libtool-ltdl-2.2.6-15.5.el6.x86_64
+yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64
 cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
 cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
@@ -220,7 +223,6 @@ then
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
   sed -i "s/iprangecount=\"$(($i+2))\"/iprangecount=\"$(($i+3))\"/" /home/coremail/conf/iplimit.cf
-
   sed -i "/command setting/i\iprange$(($i+3))=\"${machineIP[i]}:a:0:10000\"" /home/coremail/conf/iplimit.cf
   if [[ $? -ne 0 ]]
   then
@@ -317,8 +319,9 @@ then
 fi
 
 cp /home/coremail/conf/hosts.cf /home/coremail/var/mainconfig/hosts.cf
+banner_end "Done"
 
-echo "Edit coremail.cf..."
+banner_front "Edit coremail.cf"
 tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed -n "/${localhostIP}/p"`
 if [[ ${tmp} == ${localhostIP} ]]
 then
@@ -375,8 +378,9 @@ then
     fi
   done
 fi
+banner_end "Done"
 
-echo "Edit cmctrl.sh..."
+banner_front "Edit cmctrl.sh"
 tmp=`/sbin/ifconfig | sed -n '/inet addr/s/^[^:]*:\([0-9.]\{7,15\}\) .*/\1/p' | sed -n "/${localhostIP}/p"`
 if [[ ${tmp} == ${localhostIP} ]]
 then
@@ -401,28 +405,30 @@ then
     fi
   done
 fi
+banner_end "Done"
 
-echo "Set Startup..."
-\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail
-chkconfig --add coremail
+banner_front "Set Startup"
+\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \ 
+chkconfig --add coremail && \ 
 chkconfig coremail on
+banner_end "Done"
 
-echo "Copy 'coremail' Folder To Other Machine..."
-yum install rsync-3.0.6-12.el6.x86_64
-for((j=2;i<=`expr ${machineNumber}`;i++));
+banner_front "Copy 'coremail' Folder To Other Machine"
+yum install -y rsync-3.0.6-12.el6.x86_64
+for((j=1;j<`expr ${machineNumber}`;j++));
 do
-  read -p "Input Remote Machine IP:" tmpIP
-  rsync -aSvH /home/coremail root@${tmpIP}:/home
+  ssh root@${remoteMachine[j]} "yum install -y rsync-3.0.6-12.el6.x86_64"
+  rsync -aSvH /home/coremail root@${remoteMachine[j]}:/home
   
   for((i=1;i<=`expr ${machineNumber}`;i++));
   do
 
-    if [[ ${machineIP[i]} == ${tmpIP} ]]
+    if [[ ${machineIP[i]} == ${remoteMachine[j]} ]]
     then
       if [[ ${machineType[i]} -eq 1 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
-        sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf && \
+        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
+        sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf && \
         sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf && \
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
         chkconfig --add coremail && \
@@ -437,13 +443,13 @@ do
         chkconfig iptables off"
       elif [[ ${machineType[i]} -eq 2 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${tmpIP} "sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${tmpIP} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh root@${remoteMachine[j]} "sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf"
+        ssh root@${remoteMachine[j]} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
       elif [[ ${machineType[i]} -eq 3 ]]
       then
-        ssh root@${tmpIP} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh && \
-        sed -i 's/\(Hostid=\).*/Hostid=\"${tmpIP}\"/' /home/coremail/conf/coremail.cf && \
+        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh && \
+        sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf && \
         sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf && \
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
         chkconfig --add coremail && \
@@ -473,3 +479,7 @@ do
   
   done
 done
+banner_end "Done"
+
+banner_front "Congratulations!"
+banner_end "Everything Is Done!"
