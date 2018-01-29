@@ -26,6 +26,13 @@ do
   machineIP[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $2; }'`
   machineLocal[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $3; }'`
   machinePass[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $4; }'`
+  
+  echo "machineType[i]: ${machineType[i]}"
+  echo "machineIP[i]: ${machineIP[i]}"
+  echo "machineLocal[i]: ${machineLocal[i]}"
+  echo "machinePass[i]: ${machinePass[i]}"
+  echo "================================="
+  sleep 1s
 done
 sleep 1s
 echo "Done!"
@@ -118,7 +125,13 @@ sleep 1s
 echo "Done!"
 
 echo "Configure Webadmin..."
-read -p "Have you done it? ( Yes/No )" tmp
+webInit=1
+while [[ ${webInit} != "Yes" ]]
+do
+  read -p "Have you done it? ( Yes/No )" webInit
+done
+sleep 1s
+echo "Done!"
 
 echo "Install clamav..."
 yum install libtool-ltdl-2.2.6-15.5.el6.x86_64
@@ -127,6 +140,8 @@ cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
 ./install.sh
+sleep 1s
+echo "Done!"
 
 #############################################################################################
 echo "##########################################"
