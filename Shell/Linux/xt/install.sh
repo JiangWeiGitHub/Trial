@@ -22,10 +22,10 @@ echo "Reading CSV File..."
 machineNumber=`cat ${fileName} | wc -l`
 for((i=1;i<=`expr ${machineNumber}`;i++));
 do
-  machineType[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $1; }'`
-  machineIP[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $2; }'`
-  machineLocal[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $3; }'`
-  machinePass[i]=`cat ${fileName} | tail -n +${i} | awk -F, '{ print $4; }'`
+  machineType[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $1; }'`
+  machineIP[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $2; }'`
+  machineLocal[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $3; }'`
+  machinePass[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $4; }'`
   
   echo "machineType[i]: ${machineType[i]}"
   echo "machineIP[i]: ${machineIP[i]}"
