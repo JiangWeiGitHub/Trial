@@ -6,20 +6,20 @@ DASH="------------------------------------------------------------"
 
 banner_front()
 {
-	sleep 1s
-	echo ""
-	echo $DASH
-	echo "$1"
-	echo ""
+  sleep 1s
+  echo ""
+  echo $DASH
+  echo "$1"
+  echo ""
 }
 
 banner_end()
 {
-	echo ""
-	echo "$1"
-	echo $DASH
-	echo ""
-	sleep 1s
+  echo ""
+  echo "$1"
+  echo $DASH
+  echo ""
+  sleep 1s
 }
 
 # CSV format
@@ -51,25 +51,25 @@ do
   echo "machinePass[i]: ${machinePass[i]}"
   echo "================================="
 
-	if [[ ${machineType[i]} == "1" ]]
-	then
-		singleType=0
-	elif [[ ${machineType[i]} == "2" ]]
-	then
-		singleType=0
-	elif [[ ${machineType[i]} == "3" ]]
-	then
-		singleType=0
-		databaseMachine=${machineIP[i]}
-	else
-	  singleType=1
-		databaseMachine=${machineIP[i]}
-	fi
+  if [[ ${machineType[i]} == "1" ]]
+  then
+    singleType=0
+  elif [[ ${machineType[i]} == "2" ]]
+  then
+    singleType=0
+  elif [[ ${machineType[i]} == "3" ]]
+  then
+    singleType=0
+    databaseMachine=${machineIP[i]}
+  else
+    singleType=1
+    databaseMachine=${machineIP[i]}
+  fi
 	
-	if [[ ${machineLocal[i]} == "1" ]]
-	then
-		localhostIP=${machineIP[i]}
-	fi
+  if [[ ${machineLocal[i]} == "1" ]]
+  then
+    localhostIP=${machineIP[i]}
+  fi
 
 done
 banner_end "Done"
