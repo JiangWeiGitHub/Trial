@@ -24,7 +24,7 @@ banner_end()
 
 # CSV format
 # File Name: list.csv
-# Machine Type, Machine IP, Is Local Machine, Machine Root Password
+# Machine Type, Machine IP, Is Local Machine
 # Machine Type: 1 (Front End) 2 (Back End Without Database) 3 (Back End With Database) 4 (All In One)
 # Is Local Machine: 1 (Yes) 0 (No)
 fileName="list.csv"
@@ -43,12 +43,10 @@ do
   machineType[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $1; }'`
   machineIP[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $2; }'`
   machineLocal[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $3; }'`
-  machinePass[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $4; }'`
   
   echo "machineType[i]: ${machineType[i]}"
   echo "machineIP[i]: ${machineIP[i]}"
   echo "machineLocal[i]: ${machineLocal[i]}"
-  echo "machinePass[i]: ${machinePass[i]}"
   echo "================================="
 
   if [[ ${machineType[i]} == "1" ]]
@@ -145,7 +143,7 @@ then
 fi
 banner_end "Done"
 
-banner_front "Configure Webadmin"
+banner_front "Configure Webinst"
 webInit=1
 while [[ ${webInit} != "Yes" ]]
 do
@@ -154,12 +152,20 @@ done
 banner_end "Done"
 
 banner_front "Install clamav"
-yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64
+yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64 expect
 cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
 cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
-./install.sh
+expect << EOF
+  spawn ./install.sh
+  expect "]:"
+  send "\r"
+  expect "]:"
+  send "\r"
+  expect "]:"
+  send "\r"
+EOF
 if [[ $? -ne 0 ]]
 then
   echo "Error: Installation Failed!"
