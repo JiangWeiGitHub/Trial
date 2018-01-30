@@ -429,6 +429,9 @@ do
         ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
         sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf && \
         sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf && \
+	yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64 && \ 
+	cd /home/coremail/install/options/clamav/ && \ 
+	./install.sh && \ 	
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
         chkconfig --add coremail && \
         chkconfig coremail on && \
