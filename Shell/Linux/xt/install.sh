@@ -152,20 +152,12 @@ done
 banner_end "Done"
 
 banner_front "Install clamav"
-yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64 expect
+yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64
 cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
 cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
-expect << EOF
-  spawn ./install.sh
-  expect "]:"
-  send "\r"
-  expect "]:"
-  send "\r"
-  expect "]:"
-  send "\r"
-EOF
+./install.sh
 if [[ $? -ne 0 ]]
 then
   echo "Error: Installation Failed!"
