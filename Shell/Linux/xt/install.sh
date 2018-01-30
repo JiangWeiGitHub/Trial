@@ -408,8 +408,8 @@ fi
 banner_end "Done"
 
 banner_front "Set Startup"
-\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \ 
-chkconfig --add coremail && \ 
+\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail
+chkconfig --add coremail
 chkconfig coremail on
 banner_end "Done"
 
