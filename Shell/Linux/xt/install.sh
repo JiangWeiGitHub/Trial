@@ -157,7 +157,8 @@ cp cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz /home/coremail/
 cd /home/coremail/
 tar zxvf ./cmXT5.0.7-1_clamav_RHEL6_x86_64.tar.gz
 cd /home/coremail/install/options/clamav/
-./install.sh
+
+# ./install.sh
 if [[ $? -ne 0 ]]
 then
   echo "Error: Installation Failed!"
