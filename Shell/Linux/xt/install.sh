@@ -22,11 +22,13 @@ banner_end()
   sleep 1s
 }
 
-# CSV format
 # File Name: list.csv
-# Machine Type, Machine IP, Is Local Machine
+# CSV format
+# Machine Type, Machine IP, Machine Port, Is Local Machine
+#
 # Machine Type: 1 (Front End) 2 (Back End Without Database) 3 (Back End With Database) 4 (All In One)
 # Is Local Machine: 1 (Yes) 0 (No)
+#
 fileName="list.csv"
 
 banner_front "Check CSV File"
@@ -42,10 +44,12 @@ for((i=1,j=1;i<=`expr ${machineNumber}`;i++));
 do
   machineType[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $1; }'`
   machineIP[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $2; }'`
-  machineLocal[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $3; }'`
+  machinePort[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $3; }'`
+  machineLocal[i]=`cat ${fileName} | head -n ${i} | tail -n +${i} | awk -F, '{ print $4; }'`
   
   echo "machineType[i]: ${machineType[i]}"
   echo "machineIP[i]: ${machineIP[i]}"
+  echo "machinePort[i]: ${machinePort[i]}"
   echo "machineLocal[i]: ${machineLocal[i]}"
   echo "================================="
 
@@ -69,6 +73,7 @@ do
     localhostIP=${machineIP[i]}
   else
     remoteMachine[j]=${machineIP[i]}
+    remoteMachinePort[j]=${machinePort[i]}
     j=$((${j}+1))
   fi
 
@@ -416,8 +421,8 @@ banner_front "Copy 'coremail' Folder To Other Machine"
 yum install -y rsync-3.0.6-12.el6.x86_64
 for((j=1;j<`expr ${machineNumber}`;j++));
 do
-  ssh root@${remoteMachine[j]} "yum install -y rsync-3.0.6-12.el6.x86_64"
-  rsync -aSvH /home/coremail root@${remoteMachine[j]}:/home
+  ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "yum install -y rsync-3.0.6-12.el6.x86_64"
+  rsync -aSvH -e "ssh -p ${remoteMachinePort[j]}" /home/coremail root@${remoteMachine[j]}:/home
   
   for((i=1;i<=`expr ${machineNumber}`;i++));
   do
@@ -426,7 +431,7 @@ do
     then
       if [[ ${machineType[i]} -eq 1 ]]
       then
-        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
+        ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh && \
         sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf && \
         sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf && \
 	yum install -y libtool-ltdl-2.2.6-15.5.el6.x86_64 && \ 
@@ -445,12 +450,12 @@ do
         chkconfig iptables off"
       elif [[ ${machineType[i]} -eq 2 ]]
       then
-        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
-        ssh root@${remoteMachine[j]} "sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf"
-        ssh root@${remoteMachine[j]} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
+        ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"0\"/' /home/coremail/sbin/cmctrl.sh"
+        ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf"
+        ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"0\"/' /home/coremail/conf/coremail.cf"
       elif [[ ${machineType[i]} -eq 3 ]]
       then
-        ssh root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh && \
+        ssh -p ${remoteMachinePort[j]} root@${remoteMachine[j]} "sed -i 's/.*CONTROL_MYSQL=\"\([0-9]*\)\".*/CONTROL_MYSQL=\"1\"/' /home/coremail/sbin/cmctrl.sh && \
         sed -i 's/\(Hostid=\).*/Hostid=\"${remoteMachine[j]}\"/' /home/coremail/conf/coremail.cf && \
         sed -i 's/\(IamMainAdminSvr=\).*/IamMainAdminSvr=\"1\"/' /home/coremail/conf/coremail.cf && \
         \\cp /home/coremail/sbin/cmctrl.sh /etc/init.d/coremail && \
